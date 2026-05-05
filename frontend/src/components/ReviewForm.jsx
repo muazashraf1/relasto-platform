@@ -14,6 +14,16 @@ export default function ReviewForm({ agentId, onSubmit, isLoading, onCancel, ini
       return;
     }
 
+    if (comment.trim().length < 10) {
+      setError("Comment must be at least 10 characters");
+      return;
+    }
+
+    if (comment.length > 500) {
+      setError("Comment cannot exceed 500 characters");
+      return;
+    }
+
     if (rating < 1 || rating > 5) {
       setError("Rating must be between 1 and 5");
       return;
@@ -70,11 +80,17 @@ export default function ReviewForm({ agentId, onSubmit, isLoading, onCancel, ini
             onChange={(e) => setComment(e.target.value)}
             placeholder="Share your experience with this agent..."
             rows="5"
+            maxLength="500"
             className="w-full rounded-3xl border border-slate-200 bg-white px-5 py-3 text-slate-900 outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
           />
-          <p className="mt-2 text-xs text-slate-500">
-            {comment.length} / 500 characters
-          </p>
+          <div className="mt-2 flex justify-between items-center">
+            <p className={`text-xs ${comment.length < 10 ? 'text-red-600' : 'text-slate-500'}`}>
+              {comment.length < 10 ? `${10 - comment.length} more characters needed` : `${comment.length} / 500 characters`}
+            </p>
+            {comment.length > 450 && (
+              <p className="text-xs text-orange-600">Approaching limit</p>
+            )}
+          </div>
         </div>
 
         {/* Error Message */}

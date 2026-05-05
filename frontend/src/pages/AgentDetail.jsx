@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axiosInstance";
-import { createReview, getAgentReviews, updateReview, deleteReview } from "../api/review";
+import { createReview, getAgentReviews, deleteReview } from "../api/review";
 import ReviewForm from "../components/ReviewForm";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
@@ -26,6 +26,7 @@ const AgentDetail = () => {
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [reviewError, setReviewError] = useState("");
   const [user, setUser] = useState(null);
+  const [error, setError] = useState("");
 
   // Get current user from localStorage
   useEffect(() => {
@@ -39,8 +40,10 @@ const AgentDetail = () => {
     try {
       const res = await api.get(`/accounts/profile/${id}/`);
       setAgent(res.data);
+      setError("");
     } catch (err) {
       console.error(err);
+      setError("Failed to load agent profile");
     }
   };
 
@@ -57,7 +60,9 @@ const AgentDetail = () => {
     try {
       const res = await getAgentReviews(id);
       setReviews(res.reviews || []);
-      setAverageRating(res.average_rating ? Math.round(res.average_rating * 10) / 10 : 0);
+      // Calculate average from reviews data if available
+      const avg = res.average_rating ? parseFloat(res.average_rating) : 0;
+      setAverageRating(avg);
     } catch (err) {
       console.error(err);
     } finally {
@@ -101,8 +106,23 @@ const AgentDetail = () => {
 
   if (loading || !agent)
     return (
-      <div className="flex h-screen items-center justify-center text-slate-500">
-        Loading profile...
+      <div className="flex h-screen items-center justify-center">
+        {error ? (
+          <div className="rounded-lg bg-red-50 p-6 text-center border border-red-200">
+            <h3 className="text-lg font-semibold text-red-900">{error}</h3>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 rounded-full bg-red-600 px-6 py-2 text-white hover:bg-red-700"
+            >
+              Retry
+            </button>
+          </div>
+        ) : (
+          <div className="text-slate-500">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-slate-900"></div>
+            <p className="mt-4">Loading profile...</p>
+          </div>
+        )}
       </div>
     );
 
@@ -118,7 +138,7 @@ const AgentDetail = () => {
           alt="Hero background"
           className="absolute inset-0 h-full w-full object-cover opacity-40"
         />
-        <div className="absolute inset-0 bg-linear-to-b from-transparent to-slate-900/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/60" />
 
         <div className="relative mx-auto max-w-7xl px-4 h-full flex items-end pb-8">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:gap-10">
@@ -196,24 +216,22 @@ const AgentDetail = () => {
 
                           <div className="grid gap-2 sm:grid-cols-3 text-sm">
                             <div className="rounded-2xl bg-slate-50 px-3 py-2">
-                              <p className="font-semibold text-slate-900">Beds</p>
-                              <p className="text-slate-500">
-                                {property.features?.find((f) =>
-                                  f.key.toLowerCase().includes("bed")
-                                )?.value || "3"}
+                              <p className="font-semibold text-slate-900">Bedrooms</p>
+                              <p className="text-slate-600">
+                                {property.bedrooms || "—"}
                               </p>
                             </div>
                             <div className="rounded-2xl bg-slate-50 px-3 py-2">
-                              <p className="font-semibold text-slate-900">Baths</p>
-                              <p className="text-slate-500">
-                                {property.features?.find((f) =>
-                                  f.key.toLowerCase().includes("bath")
-                                )?.value || "2"}
+                              <p className="font-semibold text-slate-900">Bathrooms</p>
+                              <p className="text-slate-600">
+                                {property.bathrooms || "—"}
                               </p>
                             </div>
                             <div className="rounded-2xl bg-slate-50 px-3 py-2">
                               <p className="font-semibold text-slate-900">Area</p>
-                              <p className="text-slate-500">2,500 sqft</p>
+                              <p className="text-slate-600">
+                                {property.area ? `${property.area} sqft` : "—"}
+                              </p>
                             </div>
                           </div>
 
@@ -281,7 +299,7 @@ const AgentDetail = () => {
                       className="rounded-4xl border border-slate-200 bg-white p-6 shadow-sm"
                     >
                       <div className="flex items-start gap-4">
-                        <div className="h-12 w-12 shrink-0 rounded-full bg-linear-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold">
+                        <div className="h-12 w-12 shrink-0 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold">
                           {review.user?.[0]?.toUpperCase() || "U"}
                         </div>
                         <div className="flex-1">
@@ -328,23 +346,35 @@ const AgentDetail = () => {
           {/* SIDEBAR */}
           <div className="space-y-6">
             <div className="rounded-4xl bg-white p-6 shadow-lg border border-slate-200 sticky top-20">
-              <h3 className="mb-6 text-lg font-bold text-slate-900">Agent Info</h3>
+              <h3 className="mb-6 text-lg font-bold text-slate-900">Contact Agent</h3>
 
               <div className="space-y-4">
                 <div>
-                  <p className="text-xs uppercase tracking-widest text-slate-500">Email</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900">{agent.email}</p>
+                  <p className="text-xs uppercase tracking-widest text-slate-500 font-semibold">Email</p>
+                  <a 
+                    href={`mailto:${agent.email}`}
+                    className="mt-1 text-sm font-semibold text-slate-900 hover:text-blue-600 break-all"
+                  >
+                    {agent.email}
+                  </a>
                 </div>
 
                 <div>
-                  <p className="text-xs uppercase tracking-widest text-slate-500">Phone</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900">
-                    {agent.phone || "Not provided"}
-                  </p>
+                  <p className="text-xs uppercase tracking-widest text-slate-500 font-semibold">Phone</p>
+                  {agent.phone ? (
+                    <a 
+                      href={`tel:${agent.phone}`}
+                      className="mt-1 text-sm font-semibold text-slate-900 hover:text-blue-600"
+                    >
+                      {agent.phone}
+                    </a>
+                  ) : (
+                    <p className="mt-1 text-sm text-slate-500">Not provided</p>
+                  )}
                 </div>
 
                 <div>
-                  <p className="text-xs uppercase tracking-widest text-slate-500">Address</p>
+                  <p className="text-xs uppercase tracking-widest text-slate-500 font-semibold">Address</p>
                   <p className="mt-1 text-sm font-semibold text-slate-900">
                     {agent.address || "Not provided"}
                   </p>
@@ -352,32 +382,43 @@ const AgentDetail = () => {
 
                 {agent.bio && (
                   <div>
-                    <p className="text-xs uppercase tracking-widest text-slate-500">Bio</p>
+                    <p className="text-xs uppercase tracking-widest text-slate-500 font-semibold">About</p>
                     <p className="mt-2 text-sm text-slate-600">{agent.bio}</p>
                   </div>
                 )}
               </div>
 
               <div className="mt-8 space-y-3 border-t border-slate-200 pt-6">
-                <button className="w-full rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
-                  Send Message
-                </button>
-                <button className="w-full rounded-full border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-50">
-                  Call Agent
-                </button>
+                <a 
+                  href={`mailto:${agent.email}`}
+                  className="block w-full rounded-full bg-slate-900 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-slate-800"
+                >
+                  Send Email
+                </a>
+                {agent.phone && (
+                  <a 
+                    href={`tel:${agent.phone}`}
+                    className="block w-full rounded-full border border-slate-200 bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+                  >
+                    Call Agent
+                  </a>
+                )}
               </div>
             </div>
 
-            <div className="rounded-4xl bg-white p-6 shadow-lg border border-slate-200">
-              <p className="text-xs uppercase tracking-widest text-slate-500 mb-3">Experience</p>
-              <p className="text-2xl font-bold text-slate-900">15+ Years</p>
-              <p className="mt-3 text-sm text-slate-600">In real estate property management and sales.</p>
+            <div className="rounded-4xl bg-gradient-to-br from-orange-50 to-orange-100 p-6 border border-orange-200">
+              <p className="text-xs uppercase tracking-widest text-orange-700 font-semibold mb-2">Rating</p>
+              <div className="flex items-end gap-2">
+                <span className="text-4xl font-bold text-orange-600">{averageRating || "N/A"}</span>
+                <span className="text-orange-600 text-xl mb-1">★</span>
+              </div>
+              <p className="mt-3 text-sm text-orange-700">Based on {reviews.length} {reviews.length === 1 ? "review" : "reviews"}</p>
             </div>
 
             <div className="rounded-4xl bg-white p-6 shadow-lg border border-slate-200">
-              <p className="text-xs uppercase tracking-widest text-slate-500 mb-3">Listings</p>
-              <p className="text-2xl font-bold text-slate-900">{properties.length}</p>
-              <p className="mt-3 text-sm text-slate-600">Active properties managed by this agent.</p>
+              <p className="text-xs uppercase tracking-widest text-slate-500 font-semibold mb-3">Active Listings</p>
+              <p className="text-3xl font-bold text-slate-900">{properties.length}</p>
+              <p className="mt-3 text-sm text-slate-600">Properties managed by this agent</p>
             </div>
           </div>
         </div>

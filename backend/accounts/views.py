@@ -12,7 +12,9 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
+from django.db.models import Avg
 from accounts.models import User, ContactMessage
+from reviews.models import Review
 from rest_framework.pagination import PageNumberPagination
 
 # Create your views here.
@@ -62,18 +64,24 @@ class PublicProfileView(APIView):
     def get(self, request, user_id):
         from accounts.models import User, Profile
 
-        # user = User.objects.get(id=user_id)
         user = get_object_or_404(User, id=user_id)
-        profile = user.profile
         profile, created = Profile.objects.get_or_create(user=user)
 
+        avg_rating = Review.objects.filter(agent=user).aggregate(avg=Avg("rating"))["avg"]
+        review_count = Review.objects.filter(agent=user).count()
+
         data = {
+            "id": user.id,
             "username": user.username,
+            "email": user.email,
             "is_agent": user.is_agent,
             "bio": profile.bio,
             "location": profile.location,
-            "phone" : user.phone,
-            "address" : user.address
+            "phone": user.phone,
+            "address": user.address,
+            "profile_image": profile.profile_image.url if profile.profile_image else None,
+            "average_rating": round(avg_rating, 1) if avg_rating is not None else None,
+            "review_count": review_count,
         }
 
         return Response(data)

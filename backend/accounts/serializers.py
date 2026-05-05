@@ -76,10 +76,22 @@ class AgentProfileSerializer(serializers.ModelSerializer):
     bio = serializers.CharField(source='profile.bio', read_only=True)
     location = serializers.CharField(source='profile.location', read_only=True)
     profile_image = serializers.ImageField(source='profile.profile_image', read_only=True)
+    average_rating = serializers.SerializerMethodField()
+    review_count = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'is_agent', 'bio', 'location', 'phone', 'address', 'profile_image']
+        fields = ['id', 'username', 'email', 'is_agent', 'bio', 'location', 'phone', 'address', 'profile_image', 'average_rating', 'review_count']
+
+    def get_average_rating(self, obj):
+        from django.db.models import Avg
+        from reviews.models import Review
+        avg = Review.objects.filter(agent=obj).aggregate(avg=Avg('rating'))['avg']
+        return round(avg, 1) if avg else None
+
+    def get_review_count(self, obj):
+        from reviews.models import Review
+        return Review.objects.filter(agent=obj).count()
 
 
 class ContactMessageSerializer(serializers.ModelSerializer):
