@@ -33,3 +33,12 @@ export const updateReview = async (review_id, rating, comment) => {
     throw error.response?.data || error.message;
   }
 };
+
+export const deleteReview = async (review_id) => {
+  try {
+    const response = await api.delete(`/reviews/delete/${review_id}/`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

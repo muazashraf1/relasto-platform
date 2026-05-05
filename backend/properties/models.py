@@ -77,6 +77,15 @@ class PropertyImage(models.Model):
     image = models.ImageField(upload_to='properties/images/')
     is_primary = models.BooleanField(default=False)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['property', 'is_primary'],
+                condition=models.Q(is_primary=True),
+                name='unique_primary_image_per_property'
+            )
+        ]
+
 class PropertyFeature(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name="features")
     key = models.CharField(max_length=100)

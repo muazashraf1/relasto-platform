@@ -8,6 +8,7 @@ from properties.serializers import (
     ImageSerializer,
     FeatureSerializer,
 )
+from properties.image_utils import optimize_image
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from accounts.models import User
@@ -191,9 +192,16 @@ class UploadPropertyImageView(APIView):
 
         image = request.FILES.get("image")
         is_primary = request.data.get("is_primary", False)
+        if isinstance(is_primary, str):
+            is_primary = is_primary.lower() in ["true", "1", "yes", "on"]
+        else:
+            is_primary = bool(is_primary)
 
         if not image:
             return Response({"error": "Image required"}, status=400)
+
+        # Optimize image before saving
+        optimized_image = optimize_image(image)
 
         # if new primary, remove old primary
         if is_primary:
@@ -202,8 +210,11 @@ class UploadPropertyImageView(APIView):
             )
 
         img = PropertyImage.objects.create(
-            property=prop, image=image, is_primary=is_primary
+            property=prop,
+            image=optimized_image,
+            is_primary=is_primary,
         )
+
         # AUTO FIX: agar koi primary nahi hai to first image ko primary bana do
         if not PropertyImage.objects.filter(property=prop, is_primary=True).exists():
             img.is_primary = True

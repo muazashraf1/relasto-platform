@@ -17,14 +17,24 @@ const AgentList = () => {
   const [location, setLocation] = useState("");
   const [sort, setSort] = useState("best");
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalAgents, setTotalAgents] = useState(0);
   const navigate = useNavigate();
 
-  const fetchAgents = async (loc = "") => {
+  const fetchAgents = async (loc = "", page = 1) => {
     setLoading(true);
     try {
-      const query = loc ? `?location=${encodeURIComponent(loc)}` : "";
+      const query = loc ? `?location=${encodeURIComponent(loc)}&page=${page}` : `?page=${page}`;
       const res = await api.get(`/accounts/agents/${query}`);
       setAgents(res.data.results || []);
+      
+      // Calculate total pages from count and page size
+      const pageSize = 8; // This matches the backend AgentPagination page_size
+      const count = res.data.count || 0;
+      setTotalAgents(count);
+      setTotalPages(Math.ceil(count / pageSize));
+      setCurrentPage(page);
     } catch (err) {
       console.error(err);
     } finally {
@@ -33,8 +43,19 @@ const AgentList = () => {
   };
 
   useEffect(() => {
-    fetchAgents();
+    fetchAgents(location, 1);
   }, []);
+
+  const handleSearch = () => {
+    setCurrentPage(1);
+    fetchAgents(location, 1);
+  };
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      fetchAgents(location, page);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -71,7 +92,7 @@ const AgentList = () => {
               </span>
             </div>
             <button
-              onClick={() => fetchAgents(location)}
+              onClick={handleSearch}
               className="inline-flex h-14 items-center justify-center rounded-full bg-slate-900 px-8 text-sm font-semibold text-white transition hover:bg-slate-800"
             >
               Search
@@ -105,7 +126,7 @@ const AgentList = () => {
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center bg-slate-200 text-slate-500">
-                        No image available
+                        👤
                       </div>
                     )}
                   </div>
@@ -138,25 +159,48 @@ const AgentList = () => {
           )}
         </div>
 
-        <div className="mt-10 flex flex-wrap items-center justify-between gap-4 rounded-4xl bg-white p-6 shadow-lg border border-slate-200">
-          <p className="text-sm text-slate-500">
-            Showing {agents.length} top agents near you.
-          </p>
-          <div className="flex gap-2">
-            <button className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-50">
-              1
-            </button>
-            <button className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-50">
-              2
-            </button>
-            <button className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-50">
-              3
-            </button>
-            <button className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-50">
-              Next Page →
-            </button>
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="mt-10 flex flex-wrap items-center justify-between gap-4 rounded-4xl bg-white p-6 shadow-lg border border-slate-200">
+            <p className="text-sm text-slate-500">
+              Showing {(currentPage - 1) * 8 + 1} - {Math.min(currentPage * 8, totalAgents)} of {totalAgents} agents.
+            </p>
+            <div className="flex gap-2">
+              {/* Previous Button */}
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                ← Prev
+              </button>
+
+              {/* Page Numbers */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                    currentPage === page
+                      ? "bg-slate-900 text-white"
+                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+
+              {/* Next Button */}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next →
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

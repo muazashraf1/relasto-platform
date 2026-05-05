@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axiosInstance";
-import { createReview, getAgentReviews, updateReview } from "../api/review";
+import { createReview, getAgentReviews, updateReview, deleteReview } from "../api/review";
 import ReviewForm from "../components/ReviewForm";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
@@ -82,6 +82,20 @@ const AgentDetail = () => {
       setReviewError(err.error || err.message || "Failed to submit review");
     } finally {
       setReviewSubmitting(false);
+    }
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm("Are you sure you want to delete this review?")) {
+      return;
+    }
+
+    try {
+      await deleteReview(reviewId);
+      setReviewError("");
+      await fetchReviews(); // Refresh reviews
+    } catch (err) {
+      setReviewError(err.error || err.message || "Failed to delete review");
     }
   };
 
@@ -267,7 +281,9 @@ const AgentDetail = () => {
                       className="rounded-4xl border border-slate-200 bg-white p-6 shadow-sm"
                     >
                       <div className="flex items-start gap-4">
-                        <div className="h-12 w-12 shrink-0 rounded-full bg-linear-to-br from-orange-400 to-orange-600" />
+                        <div className="h-12 w-12 shrink-0 rounded-full bg-linear-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold">
+                          {review.user?.[0]?.toUpperCase() || "U"}
+                        </div>
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
                             <div>
@@ -278,15 +294,25 @@ const AgentDetail = () => {
                                 {new Date(review.created_at).toLocaleDateString()}
                               </p>
                             </div>
-                            <div className="flex items-center gap-1">
-                              {[...Array(5)].map((_, i) => (
-                                <span
-                                  key={i}
-                                  className={i < review.rating ? "text-orange-500" : "text-slate-300"}
+                            <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-1">
+                                {[...Array(5)].map((_, i) => (
+                                  <span
+                                    key={i}
+                                    className={i < review.rating ? "text-orange-500" : "text-slate-300"}
+                                  >
+                                    ★
+                                  </span>
+                                ))}
+                              </div>
+                              {user && user.username === review.user && (
+                                <button
+                                  onClick={() => handleDeleteReview(review.id)}
+                                  className="text-sm text-red-600 hover:text-red-800 font-semibold"
                                 >
-                                  ★
-                                </span>
-                              ))}
+                                  Delete
+                                </button>
+                              )}
                             </div>
                           </div>
                           <p className="mt-3 text-slate-600">{review.comment}</p>

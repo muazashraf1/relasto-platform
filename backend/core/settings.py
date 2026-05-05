@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "accounts.apps.AccountsConfig",
     "corsheaders",
-    "django_filters",
+    # "django_filters",  # Will be added after installation
 ]
 
 

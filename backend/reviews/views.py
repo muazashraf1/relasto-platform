@@ -93,6 +93,20 @@ class UpdateReviewView(APIView):
         return Response(serializer.errors, status=400)
 
 
+class DeleteReviewView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, review_id):
+        review = get_object_or_404(Review, id=review_id)
+
+        # ownership check
+        if review.user != request.user:
+            return Response({"error": "Not allowed"}, status=403)
+
+        review.delete()
+        return Response({"message": "Review deleted successfully"})
+
+
 
 # ===== POSTMAN API testing
 

@@ -4,4 +4,5 @@ urlpatterns = [
     path('create/', views.CreateReviewView.as_view()),
     path('agent/<int:agent_id>/', views.AgentReviewListView.as_view()),
     path('update/<int:review_id>/', views.UpdateReviewView.as_view()),
+    path('delete/<int:review_id>/', views.DeleteReviewView.as_view()),
 ]

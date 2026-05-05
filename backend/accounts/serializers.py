@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from accounts.models import User, Profile
+from accounts.models import User, Profile, ContactMessage
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
@@ -28,9 +28,19 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    phone = serializers.CharField(source="user.phone", allow_blank=True, required=False)
+    address = serializers.CharField(source="user.address", allow_blank=True, required=False)
+
     class Meta:
         model = Profile
-        fields = ["bio", "profile_image", "location"]
+        fields = ["bio", "profile_image", "location", "phone", "address"]
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop("user", {})
+        for attr, value in user_data.items():
+            setattr(instance.user, attr, value)
+        instance.user.save()
+        return super().update(instance, validated_data)
 
 
 # class LoginSerializer(serializers.ModelSerializer):
@@ -70,3 +80,9 @@ class AgentProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'is_agent', 'bio', 'location', 'phone', 'address', 'profile_image']
+
+
+class ContactMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactMessage
+        fields = ['full_name', 'email', 'phone', 'message']

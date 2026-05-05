@@ -46,6 +46,7 @@ import Signup from "./pages/Signup";
 import Contact from "./pages/Contact";
 import Listings from "./pages/Listings";
 import PropertyDetail from "./pages/PropertyDetail";
+import UserProfile from "./pages/UserProfile";
 
 // 🔥 NEW AGENT PAGES
 import AgentList from "./pages/AgentList";
@@ -86,12 +87,21 @@ function App() {
         <Route path="/agents" element={<AgentList />} />
         <Route path="/agent/:id" element={<AgentDetail />} />
 
-        {/* PROTECTED */}
+        {/* PROTECTED ROUTES */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/add-property"
           element={
             <ProtectedRoute>
-              <div>Add Property Page</div>
+              <AgentPropertyCreate />
             </ProtectedRoute>
           }
         />

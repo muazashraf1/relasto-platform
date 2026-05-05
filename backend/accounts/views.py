@@ -5,13 +5,14 @@ from accounts.serializers import (
     ProfileSerializer,
     CustomTokenSerializer,
     AgentProfileSerializer,
+    ContactMessageSerializer,
 )
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
-from accounts.models import User
+from accounts.models import User, ContactMessage
 from rest_framework.pagination import PageNumberPagination
 
 # Create your views here.
@@ -97,4 +98,15 @@ class AgentListView(generics.ListAPIView):
             queryset = queryset.filter(profile__location__icontains=location)
 
         return queryset
+
+
+class ContactMessageView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = ContactMessageSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Your message has been sent successfully. We will get back to you soon!"}, status=201)
+        return Response(serializer.errors, status=400)
 
