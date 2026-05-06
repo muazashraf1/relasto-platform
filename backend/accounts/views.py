@@ -38,20 +38,57 @@ class ProfileView(APIView):
 
     def get(self, request):
         profile = request.user.profile
+        user = request.user
+
+        avg_rating = None
+        review_count = None
+
+        if(user.is_agent):
+            avg_rating = Review.objects.filter(agent=user).aggregate(avg=Avg("rating"))["avg"]
+            review_count = Review.objects.filter(agent=user).count()
+
         serializer = ProfileSerializer(profile)
-        return Response(serializer.data)
 
-    def put(
-        self, request
-    ):  #  FIX (POST → PATCH) this is for strong check k user sirf apni hi profile edit kr skta hai
+        data = {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "is_agent": user.is_agent,
+            "bio": profile.bio,
+            "location": profile.location,
+            "phone": user.phone,
+            "address": user.address,
+            "profile_image": profile.profile_image.url if profile.profile_image else None,
+            "average_rating": round(avg_rating, 1) if avg_rating is not None else 0,
+            "review_count": review_count,
+        }
 
-        profile = request.user.profile
-        serializer = ProfileSerializer(profile, data=request.data, partial=True)
+        return Response(data)
+
+    def put(self, request):
+        user = request.user
+        profile = user.profile
+
+        user_data = request.data.get("user", {})
+        profile_data = request.data.get("profile", {})
+
+        # USER UPDATE
+        user_fields = ["username", "email", "phone", "address"]
+
+        for field in user_fields:
+            if field in user_data:
+                setattr(user, field, user_data[field])
+
+        user.save()
+
+        # PROFILE UPDATE
+        serializer = ProfileSerializer(profile, data=profile_data, partial=True)
+
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": "Profile updated!"})
-        return Response(serializer.errors, status=400)
+            return Response({"message": "Profile updated successfully!"})
 
+        return Response(serializer.errors, status=400)
 
 # class LoginView(TokenObtainPairView):
 #     pass
@@ -80,7 +117,7 @@ class PublicProfileView(APIView):
             "phone": user.phone,
             "address": user.address,
             "profile_image": profile.profile_image.url if profile.profile_image else None,
-            "average_rating": round(avg_rating, 1) if avg_rating is not None else None,
+            "average_rating": round(avg_rating, 1) if avg_rating is not None else 0,
             "review_count": review_count,
         }
 

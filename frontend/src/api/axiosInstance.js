@@ -44,8 +44,8 @@ api.interceptors.response.use(
         return api(originalRequest);
 
       } catch (err) {
-        clearTokens();
-        window.location.href = "/login-page";
+        // clearTokens();
+        // window.location.href = "/login-page";
       }
     }
 

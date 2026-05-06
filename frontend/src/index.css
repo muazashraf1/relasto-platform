@@ -1,1 +1,5 @@
 @import "tailwindcss";
+
+.Toastify__progress-bar {
+  background: #FF6900 !important;
+}

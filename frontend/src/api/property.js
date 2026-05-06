@@ -25,16 +25,19 @@ export const getPropertyDetail = async (slug) => {
 };
 
 export const getAgentProperties = async (agentId, params = {}) => {
-  const query = new URLSearchParams({ agent_id: agentId, ...params }).toString();
+  const query = new URLSearchParams({
+    agent_id: agentId,
+    ...params,
+  }).toString();
   const res = await api.get(`/properties/search/?${query}`);
   return res.data;
 };
 
 //  CREATE PROPERTY (AGENT ONLY)
-export const createProperty = async (data) => {
-  const res = await api.post("/properties/create/", data);
-  return res.data;
-};
+// export const createProperty = async (data) => {
+//   const res = await api.post("/properties/create/", data);
+//   return res.data;
+// };
 
 export const updateProperty = async (slug, data) => {
   const res = await api.put(`/properties/update/${slug}`, data);
@@ -65,4 +68,51 @@ export const addPropertyFeature = async (slug, data) => {
 export const deletePropertyFeature = async (id) => {
   const res = await api.delete(`/properties/features/delete/${id}/`);
   return res.data;
+};
+
+// ========================================================================
+
+import axios from "axios";
+
+const BASEURL = import.meta.env.VITE_API_URL;
+
+const getToken = () => {
+  return localStorage.getItem("token");
+};
+
+// ------------------------------------
+// CREATE PROPERTY
+// ------------------------------------
+export const createProperty = async (data) => {
+  const response = await api.post(`/properties/create/`, data);
+
+  return response.data;
+};
+
+// ------------------------------------
+// UPLOAD PROPERTY IMAGES
+// ------------------------------------
+export const uploadPropertyImages = async (propertyId, images) => {
+  const formData = new FormData();
+
+  // Append all images
+  images.forEach((image) => {
+    formData.append("images", image);
+  });
+
+  const response = await api.post(
+    `/properties/${propertyId}/images/`,
+    formData,
+  );
+
+  return response.data;
+};
+
+// ------------------------------------
+// CREATE PROPERTY FEATURES
+// ------------------------------------
+export const createPropertyFeatures = async (propertyId, features) => {
+  const response = await api.post(`/properties/${propertyId}/features/`, features);
+
+  return response.data;
 };

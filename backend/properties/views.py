@@ -7,6 +7,8 @@ from properties.serializers import (
     PropertyDetailSerializer,
     ImageSerializer,
     FeatureSerializer,
+    PropertyImageSerializer,
+    PropertyFeatureSerializer,
 )
 from properties.image_utils import optimize_image
 from rest_framework.generics import ListAPIView
@@ -20,41 +22,131 @@ from properties.models import Property, PropertyImage, PropertyFeature
 from properties.filters import PropertyFilter
 from django.db.models import Q
 
-# Create your views here.
-
-
 # 5.4 module
+
+
+# class CreatePropertyView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def post(self, request):
+#         # agent = get_object_or_404(User, is_agent=True)
+#         if not request.user.is_agent:
+#             return Response(
+#                 {"message": "Just agent can create the property!"}, status=403
+#             )
+
+#         # prop = request.data
+#         # serializer = PropertyCreateSerializer(prop)
+#         serializer = PropertyCreateSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save(agent=request.user)
+#             return Response({"message": "property created successfully!"})
+#         return Response(serializer.errors, status=403)
+
+# ======================================================================
 
 
 class CreatePropertyView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        # agent = get_object_or_404(User, is_agent=True)
+
         if not request.user.is_agent:
-            return Response(
-                {"message": "Just agent can create the property!"}, status=403
+            return Response({"message": "Only agents can create property"}, status=403)
+
+        serializer = PropertyCreateSerializer(data=request.data)
+
+        if serializer.is_valid():
+            property = serializer.save(agent=request.user)
+
+            return Response({"message": "Property created", "property_id": property.id})
+
+        return Response(serializer.errors, status=400)
+
+
+class PropertyImageUploadView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+
+        property = get_object_or_404(Property, id=pk, agent=request.user)
+
+        images = request.FILES.getlist("images")
+
+        if not images:
+            return Response({"message": "No images uploaded"}, status=400)
+
+        image_objects = []
+
+        for index, image in enumerate(images):
+
+            image_obj = PropertyImage.objects.create(
+                property=property, image=image, is_primary=True if index == 0 else False
             )
 
-        # prop = request.data
-        # serializer = PropertyCreateSerializer(prop)
-        serializer = PropertyCreateSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(agent=request.user)
-            return Response({"message": "property created successfully!"})
-        return Response(serializer.errors, status=403)
+            image_objects.append(image_obj)
+
+        serializer = PropertyImageSerializer(image_objects, many=True)
+
+        return Response(serializer.data, status=201)
+
+
+class PropertyFeatureCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+
+        property = get_object_or_404(Property, id=pk, agent=request.user)
+
+        features = request.data
+
+        created_features = []
+
+        for feature in features:
+
+            feature_obj = PropertyFeature.objects.create(
+                property=property, key=feature["key"], value=feature["value"]
+            )
+
+            created_features.append(feature_obj)
+
+        serializer = PropertyFeatureSerializer(created_features, many=True)
+
+        return Response(serializer.data)
+
+
+# ================================ End ================================
+
+
+# class MyPropertyListView(APIView):
+#     def get(self, request):
+#         if request.user.is_staff:
+#             prop = Property.objects.all()
+#             serializer = PropertyListSerializer(prop, many=True)
+#             return Response(serializer.data)
+#         else:
+#             prop = Property.objects.filter(agent=request.user)
+#             serializer = PropertyListSerializer(prop, many=True)
+#             return Response(serializer.data)
 
 
 class MyPropertyListView(APIView):
+
     def get(self, request):
+
         if request.user.is_staff:
+
             prop = Property.objects.all()
-            serializer = PropertyListSerializer(prop, many=True)
-            return Response(serializer.data)
+
         else:
+
             prop = Property.objects.filter(agent=request.user)
-            serializer = PropertyListSerializer(prop, many=True)
-            return Response(serializer.data)
+
+        serializer = PropertyListSerializer(
+            prop, many=True, context={"request": request}
+        )
+
+        return Response(serializer.data)
 
 
 class PropertyDetailView(APIView):
@@ -152,7 +244,9 @@ class PropertySearchView(APIView):
         queryset = queryset[start:end]
 
         # --- Serializer ---
-        serializer = PropertyListSerializer(queryset, many=True)
+        serializer = PropertyListSerializer(
+            queryset, many=True, context={"request": request}
+        )
 
         # return Response({
         #     "count": total,
@@ -162,7 +256,6 @@ class PropertySearchView(APIView):
         return Response(
             {"count": total, "page": page, "limit": limit, "results": serializer.data}
         )
-
 
 
 # 5.6 module

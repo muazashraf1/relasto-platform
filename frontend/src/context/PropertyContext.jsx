@@ -287,9 +287,6 @@ export const PropertyProvider = ({ children }) => {
         }
     };
 
-    // ==============================
-    // 📄 LISTING
-    // ==============================
     const fetchListingProperties = async (customPage = 1, customFilters = filters) => {
         try {
             setLoading(true);
@@ -314,9 +311,7 @@ export const PropertyProvider = ({ children }) => {
         }
     };
 
-    // ==============================
-    // 🔍 FILTER UPDATE
-    // ==============================
+
     const updateFilters = (newFilters) => {
         setFilters((prev) => ({
             ...prev,
@@ -335,9 +330,7 @@ export const PropertyProvider = ({ children }) => {
         });
     };
 
-    // ==============================
-    // 🔥 PROPERTY DETAIL (UPDATED)
-    // ==============================
+  
     const fetchPropertyDetail = async (slug) => {
         try {
             setLoading(true);

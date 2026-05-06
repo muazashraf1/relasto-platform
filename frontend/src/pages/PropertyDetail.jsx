@@ -10,6 +10,8 @@ const PropertyDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
 
+  
+
   // 🔹 PROPERTY CONTEXT
   const {
     propertyDetail,
@@ -27,10 +29,6 @@ const PropertyDetail = () => {
     clearMessages,
   } = useContext(VisitContext);
 
-  // 🔹 AUTH
-  const { user } = useContext(AuthContext);
-
-  // 🔹 FORM STATE
   const [formData, setFormData] = useState({
     phone: "",
     email: "",
@@ -46,14 +44,6 @@ const PropertyDetail = () => {
     return () => clearPropertyDetail();
   }, [slug]);
 
-  // ==============================
-  // REDIRECT IF NOT LOGIN
-  // ==============================
-  useEffect(() => {
-    if (!user) {
-      navigate("/login-page");
-    }
-  }, [user]);
 
   // ==============================
   // HANDLE CHANGE

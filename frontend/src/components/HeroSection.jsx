@@ -106,7 +106,7 @@ function HeroSection() {
     });
   };
 
-  // 🔥 SEARCH FUNCTION (SRS CORE FEATURE)
+
   const handleSearch = () => {
     const query = new URLSearchParams();
 
@@ -119,7 +119,7 @@ function HeroSection() {
   };
 
   return (
-    <section className="w-full min-h-[90vh] bg-gradient-to-r from-[#f8f5f2] to-[#f3ede7] flex items-center px-8 md:px-16 relative overflow-hidden">
+    <section className="w-full min-h-[90vh] bg-gradient-to-r from-[#f8f5f2] to-[#f3ede7] flex items-center px-8 md:px-16 relative overflow-hidden mt-16">
 
       {/* LEFT */}
       <div className="w-full md:w-1/2 space-y-6 z-10">
@@ -195,7 +195,7 @@ function HeroSection() {
       {/* RIGHT IMAGE */}
       <div className="hidden md:flex w-1/2 justify-end relative">
         <img
-          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
+          src="/Relasto design (1)/img_image.png"
           alt="house"
           className="w-[500px] rounded-2xl shadow-2xl"
         />

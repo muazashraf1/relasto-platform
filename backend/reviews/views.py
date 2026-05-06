@@ -49,9 +49,16 @@ class CreateReviewView(APIView):
             if Review.objects.filter(user=request.user, agent=agent).exists():
                 return Response({"error": "Already reviewed"}, status=400)
 
-            serializer.save(user=request.user)
+            review = serializer.save(user=request.user)
+            avg_rating = Review.objects.filter(agent=agent).aggregate(avg=Avg("rating"))["avg"]
+            review_count = Review.objects.filter(agent=agent).count()
 
-            return Response({"message": "Review created successfully"})
+            return Response({
+                "message": "Review created successfully",
+                "review": ReviewListSerializer(review).data,
+                "average_rating": round(avg_rating, 1) if avg_rating is not None else 0,
+                "review_count": review_count,
+            })
 
         return Response(serializer.errors, status=400)
 
@@ -63,14 +70,18 @@ class AgentReviewListView(APIView):
         if not agent.is_agent:
             return Response({"error": "Not an agent"}, status=400)
 
-        reviews = Review.objects.filter(agent=agent)
+        reviews = Review.objects.filter(agent=agent).order_by("-created_at")
         serializer = ReviewListSerializer(reviews, many=True)
 
-        avg_rating = reviews.aggregate(avg=Avg("rating"))
+        avg_rating = reviews.aggregate(avg=Avg("rating"))[
+            "avg"
+        ]
+        review_count = reviews.count()
 
         return Response({
-            "average_rating": avg_rating["avg"],
-            "reviews": serializer.data
+            "average_rating": round(avg_rating, 1) if avg_rating is not None else 0,
+            "review_count": review_count,
+            "reviews": serializer.data,
         })
 
 

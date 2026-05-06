@@ -32,6 +32,7 @@ import uuid
 #         super().save(*args, **kwargs)
 
 
+
 from django.db import models
 from accounts.models import User
 from django.utils.text import slugify
@@ -90,3 +91,4 @@ class PropertyFeature(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name="features")
     key = models.CharField(max_length=100)
     value = models.CharField(max_length=100)
+

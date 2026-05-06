@@ -140,10 +140,16 @@ const AgentList = () => {
                     <div className="flex items-center gap-2 text-sm text-slate-600">
                       <span className="flex items-center gap-1">
                         <span className="text-orange-500">★</span>
-                        <span className="font-semibold">4.5</span>
+                        <span className="font-semibold">
+                          {agent.average_rating && Number(agent.average_rating) > 0
+                            ? Number(agent.average_rating).toFixed(1)
+                            : "N/A"}
+                        </span>
                       </span>
                       <span className="text-slate-400">|</span>
-                      <span>4.5 review</span>
+                      <span>
+                        {agent.review_count ?? 0} {agent.review_count === 1 ? "review" : "reviews"}
+                      </span>
                     </div>
 
                     <button

@@ -1,8 +1,10 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
+import { useNavigate, Link } from "react-router-dom";
 
 const Signup = () => {
-  const { register } = useContext(AuthContext);
+  const { register, loading, error } = useContext(AuthContext);
 
   const [form, setForm] = useState({
     email: "",
@@ -11,6 +13,8 @@ const Signup = () => {
     password2: "",
     is_agent: false,
   });
+
+  const navigate = useNavigate()
 
   // handle change
   const handleChange = (e) => {
@@ -33,10 +37,19 @@ const Signup = () => {
 
     if (res) {
       console.log("OK");
+      navigate("/login-page")
     } else {
       console.log("FAILED");
     }
   };
+
+
+  useEffect(() => {
+    if (error) {
+      toast(error)
+    }
+  }, [error])
+
 
   return (
     <div className="min-h-screen bg-gray-300 flex items-center justify-center pt-26">
@@ -57,7 +70,7 @@ const Signup = () => {
               name="username"
               value={form.username}
               onChange={handleChange}
-              placeholder="Full Name"
+              placeholder="Username"
               className="w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400"
             />
           </div>
@@ -115,16 +128,18 @@ const Signup = () => {
           </div>
 
           {/* Button */}
-          <button className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition">
-            Sign Up
+          <button disabled={loading} className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition">
+            {loading ? "Loading..." : "Sign Up"}
           </button>
 
           {/* Footer */}
           <p className="text-center text-sm mt-6">
             Already have an account?
-            <span className="font-semibold cursor-pointer">
-              Log in
-            </span>
+            <Link to="/login-page">
+              <span className="font-semibold cursor-pointer">
+                Log in
+              </span>
+            </Link>
           </p>
         </form>
       </div>

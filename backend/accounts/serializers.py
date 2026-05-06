@@ -87,7 +87,7 @@ class AgentProfileSerializer(serializers.ModelSerializer):
         from django.db.models import Avg
         from reviews.models import Review
         avg = Review.objects.filter(agent=obj).aggregate(avg=Avg('rating'))['avg']
-        return round(avg, 1) if avg else None
+        return round(avg, 1) if avg is not None else 0
 
     def get_review_count(self, obj):
         from reviews.models import Review

@@ -36,7 +36,7 @@
 
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-
+import { ToastContainer } from 'react-toastify';
 import Navbar from "./components/Navbar";
 
 // Pages
@@ -64,6 +64,8 @@ import AgentProperties from "./pages/agent/AgentProperties";
 import AgentVisitRequests from "./pages/agent/AgentVisitRequests";
 import AgentProfile from "./pages/agent/AgentProfile";
 import AgentPropertyCreate from "./pages/agent/AgentPropertyCreate";
+import NotFound from "./pages/NotFound";
+import UpdateProperty from "./pages/UpdateProperty";
 
 
 
@@ -91,18 +93,27 @@ function App() {
         <Route
           path="/profile"
           element={
-            <ProtectedRoute>
+            // <ProtectedRoute>
               <UserProfile />
-            </ProtectedRoute>
+            // </ProtectedRoute>
           }
         />
 
         <Route
           path="/add-property"
           element={
-            <ProtectedRoute>
+            // <ProtectedRoute>
               <AgentPropertyCreate />
-            </ProtectedRoute>
+            // </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/edit-property/:slug"
+          element={
+            // <ProtectedRoute>
+              <UpdateProperty />
+            // </ProtectedRoute>
           }
         />
 
@@ -122,7 +133,10 @@ function App() {
           <Route path="profile" element={<AgentProfile />} />
         </Route>
 
+        <Route path="*" element={<NotFound/>} />
+
       </Routes>
+      <ToastContainer />
     </>
   );
 }

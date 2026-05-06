@@ -2,7 +2,6 @@ from django.urls import path
 from properties import views
 
 urlpatterns = [
-    path("create/", views.CreatePropertyView.as_view()),
     path("my/", views.MyPropertyListView.as_view()),
     path("search/", views.PropertySearchView.as_view()),
     path("update/<slug:slug>/", views.UpdatePropertyView.as_view()),
@@ -13,6 +12,14 @@ urlpatterns = [
     path("images/upload/<slug:slug>/", views.UploadPropertyImageView.as_view()),
     path("features/add/<slug:slug>/", views.AddPropertyFeatureView.as_view()),
     path("features/delete/<int:id>/", views.DeletePropertyFeatureView.as_view()),
+
+    # =====================================================
+
+    path("create/", views.CreatePropertyView.as_view()),
+    path("<int:pk>/images/", views.PropertyImageUploadView.as_view()),
+    path("<int:pk>/features/", views.PropertyFeatureCreateView.as_view()),
+
+
 ]
 
 

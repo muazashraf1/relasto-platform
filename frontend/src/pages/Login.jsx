@@ -1,16 +1,26 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Login = () => {
 
   const navigate = useNavigate()
 
-  const { login } = useContext(AuthContext)
+  const { login, error, loading, user } = useContext(AuthContext)
   const [formData, setFormData] = useState({
     email: "",
     password: ""
   })
+
+  console.log(user);
+
+  useEffect(() => {
+    if (user) {
+      navigate('/profile')
+    }
+  }, [user])
+
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -27,15 +37,25 @@ const Login = () => {
 
     const success = await login(formData)
 
+    console.log(success);
+
+
     if (success) {
-      alert("Login success");
+      toast.success("Login Successfully")
       navigate("/");
     } else {
-      alert("Error");
       console.log(error)
     }
-
   }
+  console.log("error:", error);
+
+  useEffect(() => {
+    if (error) {
+      toast(error)
+    }
+  }, [error])
+
+
   return (
     <div className="min-h-screen bg-gray-300 flex items-center justify-center">
       <div className="bg-white w-[400px] rounded-xl shadow-lg p-6">
@@ -53,7 +73,7 @@ const Login = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="user / email address"
+              placeholder="Email address"
               className="w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400"
             />
           </div>
@@ -71,8 +91,8 @@ const Login = () => {
           </div>
 
           {/* Button */}
-          <button className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition">
-            Log in
+          <button disabled={loading} className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition">
+            {loading ? "Loading..." : "Log in"}
           </button>
 
           {/* Footer */}

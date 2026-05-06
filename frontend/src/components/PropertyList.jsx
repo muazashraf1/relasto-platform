@@ -295,7 +295,7 @@ const PropertyList = () => {
     useEffect(() => {
         fetchHomeProperties();
     }, []);
-    
+
     if (loading) {
         return <p className="text-center mt-10">Loading properties...</p>;
     }
@@ -307,19 +307,17 @@ const PropertyList = () => {
     return (
         <div className="max-w-7xl mx-auto px-4 py-10">
 
-            {/* Header */}
             <div className="flex justify-between items-center mb-8">
                 <h2 className="text-2xl font-semibold">Featured Properties</h2>
 
                 <button
                     onClick={() => navigate("/property-listing")}
-                    className="text-sm font-medium text-blue-600 hover:underline"
+                    className="text-sm border  font-medium text-white px-7 py-3.5 bg-amber-700 rounded-2xl "
                 >
                     Explore More →
                 </button>
             </div>
 
-            {/* Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
 
                 {properties.map((property) => (
@@ -328,7 +326,7 @@ const PropertyList = () => {
                         className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300"
                     >
 
-                        {/* Image */}
+
                         <div className="h-52 w-full">
                             <img
                                 src={
@@ -341,15 +339,15 @@ const PropertyList = () => {
                             />
                         </div>
 
-                        {/* Content */}
+
                         <div className="p-4 space-y-3">
 
-                            {/* City */}
+
                             <p className="text-sm text-gray-600 flex items-center gap-2">
                                 🏢 {property.address}
                             </p>
 
-                            {/* Features */}
+
                             <div className="flex flex-wrap gap-3 text-sm text-gray-600">
                                 {property.features?.length > 0 ? (
                                     property.features.slice(0, 3).map((f, i) => (
@@ -362,7 +360,7 @@ const PropertyList = () => {
                                 )}
                             </div>
 
-                            {/* Bottom */}
+
                             <div className="flex justify-between items-center pt-2">
 
                                 <button

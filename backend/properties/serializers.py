@@ -52,8 +52,18 @@ class PropertyListSerializer(serializers.ModelSerializer):
         ]
 
     def get_primary_image(self, obj):
+
         image = obj.images.filter(is_primary=True).first()
-        return image.image.url if image else None
+
+        # If no image exists
+        if not image:
+            return None
+
+        # Get request object from serializer context
+        request = self.context.get("request")
+
+        # Return full absolute URL
+        return request.build_absolute_uri(image.image.url)
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -70,4 +80,32 @@ class PropertyDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Property
+        fields = "__all__"
+
+
+# ===================================================================
+
+
+from rest_framework import serializers
+from .models import Property, PropertyImage, PropertyFeature
+
+
+class PropertyCreateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Property
+        exclude = ["agent", "slug"]
+
+
+class PropertyImageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PropertyImage
+        fields = "__all__"
+
+
+class PropertyFeatureSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PropertyFeature
         fields = "__all__"

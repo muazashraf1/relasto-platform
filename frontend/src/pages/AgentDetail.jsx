@@ -21,6 +21,7 @@ const AgentDetail = () => {
   const [properties, setProperties] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [averageRating, setAverageRating] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
@@ -40,6 +41,8 @@ const AgentDetail = () => {
     try {
       const res = await api.get(`/accounts/profile/${id}/`);
       setAgent(res.data);
+      setAverageRating(res.data.average_rating ?? 0);
+      setReviewCount(res.data.review_count ?? 0);
       setError("");
     } catch (err) {
       console.error(err);
@@ -60,9 +63,8 @@ const AgentDetail = () => {
     try {
       const res = await getAgentReviews(id);
       setReviews(res.reviews || []);
-      // Calculate average from reviews data if available
-      const avg = res.average_rating ? parseFloat(res.average_rating) : 0;
-      setAverageRating(avg);
+      setReviewCount(res.review_count || 0);
+      setAverageRating(res.average_rating ? parseFloat(res.average_rating) : 0);
     } catch (err) {
       console.error(err);
     } finally {
@@ -84,7 +86,7 @@ const AgentDetail = () => {
       setShowReviewForm(false);
       await fetchReviews(); // Refresh reviews
     } catch (err) {
-      setReviewError(err.error || err.message || "Failed to submit review");
+      setReviewError(err.error || err.message || err.detail || "Failed to submit review");
     } finally {
       setReviewSubmitting(false);
     }
@@ -165,16 +167,18 @@ const AgentDetail = () => {
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1">
                   <span className="text-2xl">★</span>
-                  <span className="text-2xl font-bold">{averageRating || "N/A"}</span>
+                  <span className="text-2xl font-bold">
+                    {averageRating > 0 ? averageRating.toFixed(1) : "N/A"}
+                  </span>
                 </div>
-                <span className="text-slate-300">{reviews.length} reviews</span>
+                <span className="text-slate-300">
+                  {reviewCount} {reviewCount === 1 ? "review" : "reviews"}
+                </span>
               </div>
-
-              <p className="text-slate-200">📍 {agent.location || "Not specified"}</p>
             </div>
           </div>
         </div>
-      </div>
+      </div> {/* ✅ HERO SECTION CLOSED */}
 
       <div className="mx-auto max-w-7xl px-4 py-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
@@ -351,7 +355,7 @@ const AgentDetail = () => {
               <div className="space-y-4">
                 <div>
                   <p className="text-xs uppercase tracking-widest text-slate-500 font-semibold">Email</p>
-                  <a 
+                  <a
                     href={`mailto:${agent.email}`}
                     className="mt-1 text-sm font-semibold text-slate-900 hover:text-blue-600 break-all"
                   >
@@ -362,7 +366,7 @@ const AgentDetail = () => {
                 <div>
                   <p className="text-xs uppercase tracking-widest text-slate-500 font-semibold">Phone</p>
                   {agent.phone ? (
-                    <a 
+                    <a
                       href={`tel:${agent.phone}`}
                       className="mt-1 text-sm font-semibold text-slate-900 hover:text-blue-600"
                     >
@@ -389,14 +393,14 @@ const AgentDetail = () => {
               </div>
 
               <div className="mt-8 space-y-3 border-t border-slate-200 pt-6">
-                <a 
+                <a
                   href={`mailto:${agent.email}`}
                   className="block w-full rounded-full bg-slate-900 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-slate-800"
                 >
                   Send Email
                 </a>
                 {agent.phone && (
-                  <a 
+                  <a
                     href={`tel:${agent.phone}`}
                     className="block w-full rounded-full border border-slate-200 bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
                   >
@@ -412,7 +416,9 @@ const AgentDetail = () => {
                 <span className="text-4xl font-bold text-orange-600">{averageRating || "N/A"}</span>
                 <span className="text-orange-600 text-xl mb-1">★</span>
               </div>
-              <p className="mt-3 text-sm text-orange-700">Based on {reviews.length} {reviews.length === 1 ? "review" : "reviews"}</p>
+              <p className="mt-3 text-sm text-orange-700">
+                Based on {reviewCount} {reviewCount === 1 ? "review" : "reviews"}
+              </p>
             </div>
 
             <div className="rounded-4xl bg-white p-6 shadow-lg border border-slate-200">
