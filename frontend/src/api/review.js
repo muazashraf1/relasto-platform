@@ -22,9 +22,9 @@ export const getAgentReviews = async (agent_id) => {
   }
 };
 
-export const updateReview = async (review_id, rating, comment) => {
+export const updateReview = async (reviewId, rating, comment) => {
   try {
-    const response = await api.put(`/reviews/update/${review_id}/`, {
+    const response = await api.put(`/reviews/update/${reviewId}/`, {
       rating: parseInt(rating),
       comment: comment.trim(),
     });

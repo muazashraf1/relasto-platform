@@ -14,6 +14,8 @@ const AgentVisitRequests = () => {
     fetchRequests();
   };
 
+  console.log(requests);
+  
   useEffect(() => {
     fetchRequests();
   }, []);

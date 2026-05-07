@@ -121,9 +121,9 @@ function App() {
         <Route
           path="/agent"
           element={
-            <ProtectedRoute>
+            // <ProtectedRoute>
               <AgentDashboard />
-            </ProtectedRoute>
+            // </ProtectedRoute>
           }
         >
           <Route path="dashboard" element={<h2>Welcome Agent</h2>} />

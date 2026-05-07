@@ -39,13 +39,37 @@ export const getAgentProperties = async (agentId, params = {}) => {
 //   return res.data;
 // };
 
+
 export const updateProperty = async (slug, data) => {
-  const res = await api.put(`/properties/update/${slug}`, data);
+  const res = await api.put(`/properties/update/${slug}/`, data);
   return res.data;
 };
 
+export const updatePropertyImages = async (propertyId, images) => {
+  const formData = new FormData();
+
+  // Append all images
+  images.forEach((image) => {
+    formData.append("images", image);
+  });
+
+  const response = await api.put(
+    `/properties/${propertyId}/images/`,
+    formData,
+  );
+
+  return response.data;
+};
+
+export const updatePropertyFeatures = async (propertyId, features) => {
+  const response = await api.put(`/properties/${propertyId}/features/`, features);
+
+  return response.data;
+};
+
+
 export const deleteProperty = async (slug) => {
-  const res = await api.delete(`/properties/delete/${slug}`);
+  const res = await api.delete(`/properties/delete/${slug}/`);
   return res.data;
 };
 
@@ -85,9 +109,10 @@ const getToken = () => {
 // ------------------------------------
 export const createProperty = async (data) => {
   const response = await api.post(`/properties/create/`, data);
-
   return response.data;
 };
+
+
 
 // ------------------------------------
 // UPLOAD PROPERTY IMAGES

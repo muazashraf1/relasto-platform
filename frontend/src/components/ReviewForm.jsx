@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 
-export default function ReviewForm({ agentId, onSubmit, isLoading, onCancel, initialReview = null }) {
-  const [rating, setRating] = useState(initialReview?.rating || 5);
-  const [comment, setComment] = useState(initialReview?.comment || "");
+export default function ReviewForm({ agentId, onSubmit, isLoading, onCancel, rating, setRating, comment, setComment }) {
+  // const [rating, setRating] = useState(initialReview?.rating || 5);
+  // const [comment, setComment] = useState(initialReview?.comment || "");
+  const initialReview = null;
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
@@ -30,7 +31,7 @@ export default function ReviewForm({ agentId, onSubmit, isLoading, onCancel, ini
     }
 
     try {
-      await onSubmit({ rating, comment });
+      await onSubmit({ rating, comment,  });
       setRating(5);
       setComment("");
     } catch (err) {
@@ -56,9 +57,8 @@ export default function ReviewForm({ agentId, onSubmit, isLoading, onCancel, ini
                 key={star}
                 type="button"
                 onClick={() => setRating(star)}
-                className={`text-4xl transition ${
-                  star <= rating ? "text-orange-500" : "text-slate-300"
-                } hover:text-orange-400`}
+                className={`text-4xl transition ${star <= rating ? "text-orange-500" : "text-slate-300"
+                  } hover:text-orange-400`}
               >
                 ★
               </button>

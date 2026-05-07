@@ -84,7 +84,6 @@
 
 
 
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -119,7 +118,7 @@ function HeroSection() {
   };
 
   return (
-    <section className="w-full min-h-[90vh] bg-gradient-to-r from-[#f8f5f2] to-[#f3ede7] flex items-center px-8 md:px-16 relative overflow-hidden mt-16">
+    <section className="w-full min-h-[90vh] bg-gradient-to-r from-[#f8f5f2] to-[#f3ede7] flex items-center px-8 md:px-16 relative overflow-hidden">
 
       {/* LEFT */}
       <div className="w-full md:w-1/2 space-y-6 z-10">

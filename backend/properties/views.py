@@ -90,6 +90,58 @@ class PropertyImageUploadView(APIView):
 
         return Response(serializer.data, status=201)
 
+    def put(self, request, pk):
+        property = get_object_or_404(Property, id=pk, agent=request.user)
+        images = request.FILES.getlist("images")
+
+        if not images:
+            return Response({"message": "No images Uploaded!"}, status=400)
+
+        # old images should be deleted
+        PropertyImage.objects.filter(property=property).delete()
+
+        image_objects = []
+
+        for index, image in enumerate(images):
+            image_obj = PropertyImage.objects.create(
+                property=property, image=image, is_primary=True if index == 0 else False
+            )
+
+            image_objects.append(image_obj)
+
+        serializer = PropertyImageSerializer(image_objects, many=True)
+        return Response(
+            {"message": "Images updated successfully", "images": serializer.data},
+            status=200,
+        )
+
+
+# class PropertyFeatureCreateView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def post(self, request, pk):
+
+#         property = get_object_or_404(Property, id=pk, agent=request.user)
+
+#         features = request.data
+
+#         created_features = []
+
+#         for feature in features:
+
+#             feature_obj = PropertyFeature.objects.create(
+#                 property=property, key=feature["key"], value=feature["value"]
+#             )
+
+#             created_features.append(feature_obj)
+
+#         serializer = PropertyFeatureSerializer(created_features, many=True)
+
+#         return Response(serializer.data)
+
+
+# ====== with put method of upper view
+
 
 class PropertyFeatureCreateView(APIView):
     permission_classes = [IsAuthenticated]
@@ -112,7 +164,36 @@ class PropertyFeatureCreateView(APIView):
 
         serializer = PropertyFeatureSerializer(created_features, many=True)
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=201)
+
+    def put(self, request, pk):
+
+        property = get_object_or_404(Property, id=pk, agent=request.user)
+
+        features = request.data
+
+        if not features:
+            return Response({"message": "No features provided"}, status=400)
+
+        # old features delete
+        PropertyFeature.objects.filter(property=property).delete()
+
+        updated_features = []
+
+        for feature in features:
+
+            feature_obj = PropertyFeature.objects.create(
+                property=property, key=feature["key"], value=feature["value"]
+            )
+
+            updated_features.append(feature_obj)
+
+        serializer = PropertyFeatureSerializer(updated_features, many=True)
+
+        return Response(
+            {"message": "Features updated successfully", "features": serializer.data},
+            status=200,
+        )
 
 
 # ================================ End ================================

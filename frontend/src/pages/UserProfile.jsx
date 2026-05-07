@@ -213,17 +213,28 @@ import React, { useState, useContext, useEffect, use } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import api from "../api/axiosInstance";
+import { deleteProperty } from "../api/property";
+import { VisitContext } from "../context/VisitContext";
+import VisitRequestsCard from "../components/VisitRequestsCard";
 
 const UserProfile = () => {
-  const {slug} = useParams
+  const { slug } = useParams
   const navigate = useNavigate();
   const { user, setUser, initialLoading, loadUser } = useContext(AuthContext);
+  // const { visitRequests } = useContext(VisitContext)
+
+
+
+
 
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [properties, setProperties] = useState([])
+
+
+
 
   useEffect(() => {
     if (initialLoading) return;
@@ -340,6 +351,31 @@ const UserProfile = () => {
   };
 
 
+  const handleDelete = async (slug) => {
+    try {
+      const deleting = await deleteProperty(slug)
+      singleFatching()
+
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+
+  const requestFetching = async () => {
+    const fetching = await api.get("/visits/my-request/")
+    setRequest(fetching.data)
+  }
+  const [request, setRequest] = useState([])
+
+  useEffect(() => {
+    requestFetching()
+  }, [])
+
+  console.log(request);
+
+
+
   if (!user) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -357,7 +393,8 @@ const UserProfile = () => {
         <div className="relative max-w-6xl mx-auto h-full flex items-end pb-6 px-4">
           <div className="flex items-end gap-6">
 
-            <div className="h-28 w-28 rounded-3xl bg-red-400 flex items-center justify-center text-white text-3xl font-bold shadow-xl">
+            <div className="h-28 w-28 rounded-full  flex items-center justify-center text-white text-3xl font-bold shadow-xl">
+              <img src="/Relasto design (1)/sad.jpg" className="h-full w-full rounded-full" alt="" />
 
             </div>
 
@@ -434,16 +471,23 @@ const UserProfile = () => {
 
                     <button
                       onClick={() => navigate(`/property/${property.slug}`)}
-                      className="mt-3 w-full bg-slate-900 text-white py-2 rounded-xl text-sm hover:bg-slate-800"
+                      className="mt-3 cursor-pointer w-full bg-slate-900 text-white py-2 rounded-xl text-sm hover:bg-slate-800"
                     >
                       View
                     </button>
 
                     <button
-                      onClick={ () => navigate(`/edit-property/${property.slug}`)}
-                      className="mt-3 w-full bg-slate-900 text-white py-2 rounded-xl text-sm hover:bg-slate-800"
+                      onClick={() => navigate(`/edit-property/${property.slug}`)}
+                      className="mt-3 cursor-pointer w-full bg-slate-900 text-white py-2 rounded-xl text-sm hover:bg-slate-800"
                     >
                       Edit
+                    </button>
+
+                    <button
+                      onClick={() => handleDelete(`${property.slug}`)}
+                      className="mt-3 cursor-pointer w-full bg-red-600 text-white py-2 rounded-xl text-sm hover:bg-red-500"
+                    >
+                      Delete
                     </button>
                   </div>
                 </div>
@@ -637,7 +681,12 @@ const UserProfile = () => {
         </div>
       )}
 
+
+      <VisitRequestsCard />
+
     </div>
+
+
 
 
 

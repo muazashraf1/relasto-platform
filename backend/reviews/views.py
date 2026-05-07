@@ -89,7 +89,9 @@ class UpdateReviewView(APIView):
     permission_classes = [IsAuthenticated]
 
     def put(self, request, review_id):
+        print("review_id:=============>", review_id)
         review = get_object_or_404(Review, id=review_id)
+        print("review_id:=============>", review_id)
 
         # ownership check
         if review.user != request.user:

@@ -5,6 +5,8 @@ import {
   createProperty,
   uploadPropertyImages,
   createPropertyFeatures,
+  updatePropertyImages,
+  updatePropertyFeatures,
 } from "../api/property";
 import { updateProperty } from "../api/property";
 import { PropertyContext } from "../context/PropertyContext";
@@ -21,6 +23,9 @@ const UpdateProperty = () => {
       clearPropertyDetail,
       loading: propertyLoading,
     } = useContext(PropertyContext);
+
+    const property_id = propertyDetail
+    
 
     const BASE_URL = "http://localhost:8000";    
 
@@ -151,9 +156,15 @@ const UpdateProperty = () => {
     }
 
     try {
-        const puttig = await api.put(`properties/update/${slug}/`,payload)
+        // const puttig = await api.put(`properties/update/${slug}/`,payload)
+        const puttig = await updateProperty(slug, payload)
         setSuccess("Profile updated successfully ✅");
         toast.success("Najoomis school")
+        navigate('/profile')
+
+        const updatingImage = await updatePropertyImages(property_id.id,images)
+
+        const updatingFeatures = await updatePropertyFeatures(property_id.id, features)
 
     } catch (err) {
       console.log(err);
@@ -403,7 +414,7 @@ const UpdateProperty = () => {
             disabled={loading}
             className="w-full rounded-2xl bg-slate-900 px-5 py-4 font-semibold text-white transition hover:bg-slate-700 disabled:bg-slate-400"
           >
-            {loading ? "Creating Property..." : "Create Property"}
+            {loading ? "Updating Property..." : "Update Porperty"}
           </button>
         </form>
       </div>

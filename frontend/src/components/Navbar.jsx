@@ -14,7 +14,8 @@ function Navbar() {
 
   const handleLogout = () => {
     clearTokens()
-    navigate('/')
+    // navigate('/login-page')
+    // navigate('/')
   }
 
 
@@ -64,43 +65,44 @@ function Navbar() {
               <Search size={18} />
             </button>
 
+            {IsLoggedIn && (
+              <button onClick={() => navigate('/profile')} className="p-2 rounded-full bg-orange-100 text-orange-500 hover:bg-orange-200 transition cursor-pointer">
+                <User size={18} />
+              </button>
+            )}
 
-            <button onClick={() => navigate('/profile')} className="p-2 rounded-full bg-orange-100 text-orange-500 hover:bg-orange-200 transition">
-              <User size={18} />
-            </button>
 
           </div>
 
+          {!IsLoggedIn ? (
+            <button
+              onClick={() => navigate("/login-page")}
+              className="
+                px-5 py-2 rounded-lg
+                bg-orange-500 text-white
+                font-medium
+                hover:bg-orange-600
+                transition duration-300
+                cursor-pointer
+              "
+            >
+              Login
+            </button>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="
+                px-5 py-2 rounded-lg
+                bg-orange-500 text-white
+                font-medium
+                transition duration-300
+                cursor-pointer
+              "
+            >
+              Logout
+            </button>
+          )}
 
-          <button onClick={() => navigate('/login-page')} className="px-5 py-2 bg-black text-white rounded-lg hover:bg-orange-500 transition duration-300">
-            {!IsLoggedIn ? (
-              <Link
-                to='/login-page'
-                className='
-                                px-5 py-2 rounded-xl text-sm font-medium
-                                text-emerald-800
-                                border border-emerald-200
-                                hover:bg-emerald-50 hover:border-emerald-300
-                                transition-all duration-200
-                            '
-              >
-                Login
-              </Link>
-            ) : (
-              <button
-                onClick={handleLogout}
-                className='
-                            px-5 py-2 rounded-xl text-sm font-medium
-                            text-emerald-800
-                            bg-white/50 border border-emerald-200
-                            hover:bg-red-50 hover:text-red-600 hover:border-red-200
-                            transition-all duration-200 cursor-pointer
-                        '
-              >
-                Logout
-              </button>
-            )}
-          </button>
 
         </div>
 
@@ -113,66 +115,50 @@ function Navbar() {
 
       </div>
 
-      {menuOpen && (
-        <div className="md:hidden bg-white shadow-md px-6 py-4 space-y-4">
-          <Link to="/" onClick={() => setMenuOpen(false)} className="block hover:text-orange-500">
-            Home
-          </Link>
-          <Link to="/property-listing" onClick={() => setMenuOpen(false)} className="block hover:text-orange-500">
-            Listings
-          </Link>
-          <Link to="/agents" onClick={() => setMenuOpen(false)} className="block hover:text-orange-500">
-            Agents
-          </Link>
-          <Link to="/contact" onClick={() => setMenuOpen(false)} className="block hover:text-orange-500">
-            Contact
-          </Link>
+      {
+        menuOpen && (
+          <div className="md:hidden bg-white shadow-md px-6 py-4 space-y-4">
+            <Link to="/" onClick={() => setMenuOpen(false)} className="block hover:text-orange-500">
+              Home
+            </Link>
+            <Link to="/property-listing" onClick={() => setMenuOpen(false)} className="block hover:text-orange-500">
+              Listings
+            </Link>
+            <Link to="/agents" onClick={() => setMenuOpen(false)} className="block hover:text-orange-500">
+              Agents
+            </Link>
+            <Link to="/contact" onClick={() => setMenuOpen(false)} className="block hover:text-orange-500">
+              Contact
+            </Link>
 
-          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3">
 
-            <button className="p-2 rounded-full hover:bg-gray-100 transition">
-              <Search size={18} />
-            </button>
-
-
-            <button className="p-2 rounded-full bg-orange-100 text-orange-500 hover:bg-orange-200 transition">
-              <User size={18} />
-            </button>
-
-          </div>
-
-          <button onClick={() => navigate('/login-page')} className="px-5 py-2 bg-black text-white rounded-lg hover:bg-orange-500 transition duration-300">
-            {!IsLoggedIn ? (
-              <Link
-                to='/login-page'
-                className='
-                                px-5 py-2 rounded-xl text-sm font-medium
-                                text-emerald-800
-                                border border-emerald-200
-                                hover:bg-emerald-50 hover:border-emerald-300
-                                transition-all duration-200
-                            '
-              >
-                Login
-              </Link>
-            ) : (
-              <button
-                onClick={handleLogout}
-                className='
-                            px-5 py-2 rounded-xl text-sm font-medium
-                            text-emerald-800
-                            bg-white/50 border border-emerald-200
-                            hover:bg-red-50 hover:text-red-600 hover:border-red-200
-                            transition-all duration-200 cursor-pointer
-                        '
-              >
-                Logout
+              <button className="p-2 rounded-full hover:bg-gray-100 transition">
+                <Search size={18} />
               </button>
-            )}
-          </button>
-        </div>
-      )}
-    </nav>
+
+
+              <button className="p-2 rounded-full bg-orange-100 text-orange-500 hover:bg-orange-200 transition">
+                <User size={18} />
+              </button>
+
+            </div>
+
+            <button
+              onClick={!IsLoggedIn ? () => navigate("/login-page") : handleLogout}
+              className={`
+    px-5 py-2 rounded-lg text-white font-medium transition duration-300
+    ${!IsLoggedIn
+                  ? "bg-orange-500 hover:bg-orange-600"
+                  : "bg-orange-500 hover:bg-red-500"}
+  `}
+            >
+              {!IsLoggedIn ? "Login" : "Logout"}
+            </button>
+          </div>
+        )
+      }
+    </nav >
   );
 }
 

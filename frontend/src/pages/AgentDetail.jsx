@@ -1,8 +1,9 @@
-﻿import React, { useEffect, useState } from "react";
+﻿import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axiosInstance";
-import { createReview, getAgentReviews, deleteReview } from "../api/review";
+import { createReview, getAgentReviews, deleteReview, updateReview } from "../api/review";
 import ReviewForm from "../components/ReviewForm";
+import { AuthContext } from "../context/AuthContext";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
 const API_HOST = API_BASE.replace(/\/api\/?$/, "");
@@ -26,16 +27,16 @@ const AgentDetail = () => {
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [reviewError, setReviewError] = useState("");
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState("");
+  // const [user, setUser] = useState(null);
+  const initialReview = null
 
-  // Get current user from localStorage
-  useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
+  const [rating, setRating] = useState(initialReview?.rating || 5);
+  const [comment, setComment] = useState(initialReview?.comment || "");
+  const [error, setError] = useState("");
+  const [isEdit, setIsEdit] = useState(false);
+  const [editReviewId, setEditReviewId] = useState(null);
+
+  const { user } = useContext(AuthContext);
 
   const fetchAgent = async () => {
     try {
@@ -81,9 +82,16 @@ const AgentDetail = () => {
   const handleReviewSubmit = async (reviewData) => {
     setReviewSubmitting(true);
     setReviewError("");
+
     try {
-      await createReview(parseInt(id), reviewData.rating, reviewData.comment);
-      setShowReviewForm(false);
+      if (isEdit && editReviewId) {
+        await updateReview(editReviewId, reviewData.rating, reviewData.comment);
+        setShowReviewForm(false);
+        setIsEdit(false);
+      } else {
+        await createReview(parseInt(id), reviewData.rating, reviewData.comment);
+        setShowReviewForm(false);
+      }
       await fetchReviews(); // Refresh reviews
     } catch (err) {
       setReviewError(err.error || err.message || err.detail || "Failed to submit review");
@@ -105,6 +113,17 @@ const AgentDetail = () => {
       setReviewError(err.error || err.message || "Failed to delete review");
     }
   };
+
+
+  const handleEditReview = async (reviewId) => {
+    const userReview = reviews.find((r) => r.user === user?.username)
+
+    setEditReviewId(reviewId)
+    setIsEdit(true)
+    setComment(userReview.comment)
+    setRating(userReview.rating)
+    setShowReviewForm(!showReviewForm)
+  }
 
   if (loading || !agent)
     return (
@@ -279,6 +298,10 @@ const AgentDetail = () => {
               {showReviewForm && user && (
                 <div className="mb-10">
                   <ReviewForm
+                    comment={comment}
+                    setComment={setComment}
+                    rating={rating}
+                    setRating={setRating}
                     agentId={id}
                     onSubmit={handleReviewSubmit}
                     isLoading={reviewSubmitting}
@@ -333,6 +356,14 @@ const AgentDetail = () => {
                                   className="text-sm text-red-600 hover:text-red-800 font-semibold"
                                 >
                                   Delete
+                                </button>
+                              )}
+                              {user && user.username === review.user && (
+                                <button
+                                  onClick={() => handleEditReview(review.id)}
+                                  className="text-sm text-red-600 hover:text-red-800 font-semibold"
+                                >
+                                  Edit
                                 </button>
                               )}
                             </div>

@@ -10,7 +10,7 @@ const PropertyDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
 
-  
+
 
   // 🔹 PROPERTY CONTEXT
   const {
@@ -30,6 +30,7 @@ const PropertyDetail = () => {
   } = useContext(VisitContext);
 
   const [formData, setFormData] = useState({
+    name: "",
     phone: "",
     email: "",
     preferred_date: "",
@@ -69,6 +70,7 @@ const PropertyDetail = () => {
 
     if (res) {
       setFormData({
+        name: "",
         phone: "",
         email: "",
         preferred_date: "",
@@ -173,6 +175,16 @@ const PropertyDetail = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-3">
+
+          <input
+            type="text"
+            name="name"
+            placeholder="Name"
+            value={formData.name}
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+            required
+          />
 
           <input
             type="text"
