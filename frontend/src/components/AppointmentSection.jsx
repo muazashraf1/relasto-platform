@@ -3,58 +3,75 @@ import { FaMapMarkerAlt, FaCalendarAlt, FaHome, FaSmile } from "react-icons/fa";
 
 function AppointmentSection() {
   return (
-    <section className="bg-[#f8f5f2] py-16 px-6">
-      <div className="max-w-7xl mx-auto grid gap-8 xl:grid-cols-[1.4fr_1fr] items-center">
-        <div className="space-y-6">
-          <span className="inline-flex items-center rounded-full bg-orange-100 px-4 py-1 text-sm font-semibold uppercase tracking-[0.3em] text-orange-600">
-            Your next visit starts here
-          </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
-            Simple & easy way to find your dream appointment
-          </h2>
-          <p className="max-w-xl text-gray-600 leading-8">
-            Search homes, explore agents, and schedule property visits with a clean, modern interface. Relasto helps buyers and agents connect through a dependable real estate workflow.
+    <div className="min-h-screen bg-white flex items-center justify-center px-6">
+      <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-5">
+
+        {/* LEFT BOX */}
+        <div className="bg-[#ecd0bf] rounded-[22px] px-10 py-9 h-[270px] flex flex-col justify-center">
+          <h1 className="text-[32px] leading-[42px] font-bold text-black max-w-[420px]">
+            Simple & easy way to find your dream Appointment
+          </h1>
+
+          <p className="text-[15px] leading-[26px] text-[#555] mt-4 max-w-[390px]">
+            Lorem Ipsum is simply dummy text of the printing and
+            typesetting industry.
           </p>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-3xl bg-white p-6 shadow-sm border border-gray-200">
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500 text-white">
-                <FaMapMarkerAlt />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900">Search your location</h3>
-              <p className="mt-3 text-gray-500">Filter by city, type, and price to find properties that fit your needs.</p>
-            </div>
-            <div className="rounded-3xl bg-white p-6 shadow-sm border border-gray-200">
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500 text-white">
-                <FaCalendarAlt />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900">Request a visit</h3>
-              <p className="mt-3 text-gray-500">Send a visit request with preferred dates and detailed property choices.</p>
-            </div>
-            <div className="rounded-3xl bg-white p-6 shadow-sm border border-gray-200">
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500 text-white">
-                <FaHome />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900">Find your dream house</h3>
-              <p className="mt-3 text-gray-500">Compare listings, view galleries, and review agent details from one dashboard.</p>
-            </div>
-            <div className="rounded-3xl bg-white p-6 shadow-sm border border-gray-200">
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500 text-white">
-                <FaSmile />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900">Enjoy your appointment</h3>
-              <p className="mt-3 text-gray-500">Track request status and finalize visits with a trusted agent network.</p>
-            </div>
-          </div>
+
+          <button className="mt-7 bg-black text-white text-[14px] font-medium w-[120px] h-[44px] rounded-xl">
+            Get Started
+          </button>
         </div>
-        <div className="rounded-[2rem] overflow-hidden shadow-2xl">
-          <img
-            src="https://images.unsplash.com/photo-1523217582562-09d0def993a6?auto=format&fit=crop&w=1200&q=80"
-            alt="Appointment planning"
-            className="h-full w-full object-cover"
-          />
+
+        {/* RIGHT GRID */}
+        <div className="grid grid-cols-2 gap-5">
+
+          {/* CARD 1 */}
+          <div className="bg-[#f3e7e1] rounded-[22px] p-7 h-[125px] flex flex-col justify-between">
+            <div className="text-[#ff6b1a] text-[20px]">↻</div>
+
+            <h2 className="text-[18px] leading-[26px] font-bold text-black">
+              Search
+              <br />
+              your location
+            </h2>
+          </div>
+
+          {/* CARD 2 */}
+          <div className="bg-[#f3e7e1] rounded-[22px] p-7 h-[125px] flex flex-col justify-between">
+            <div className="text-[#ff6b1a] text-[20px]">◉</div>
+
+            <h2 className="text-[18px] leading-[26px] font-bold text-black">
+              Visit
+              <br />
+              Appointment
+            </h2>
+          </div>
+
+          {/* CARD 3 */}
+          <div className="bg-[#f3e7e1] rounded-[22px] p-7 h-[125px] flex flex-col justify-between">
+            <div className="text-[#ff6b1a] text-[20px]">◔</div>
+
+            <h2 className="text-[18px] leading-[26px] font-bold text-black">
+              Get your
+              <br />
+              dream house
+            </h2>
+          </div>
+
+          {/* CARD 4 */}
+          <div className="bg-[#f3e7e1] rounded-[22px] p-7 h-[125px] flex flex-col justify-between">
+            <div className="text-[#ff6b1a] text-[20px]">☻</div>
+
+            <h2 className="text-[18px] leading-[26px] font-bold text-black">
+              Enjoy your
+              <br />
+              Appointment
+            </h2>
+          </div>
+
         </div>
       </div>
-    </section>
+    </div>
   );
 }
 

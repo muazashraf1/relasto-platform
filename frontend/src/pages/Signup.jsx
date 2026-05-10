@@ -14,6 +14,7 @@ const Signup = () => {
     is_agent: false,
   });
 
+
   const navigate = useNavigate()
 
   // handle change
@@ -37,6 +38,7 @@ const Signup = () => {
 
     if (res) {
       console.log("OK");
+      toast.success("Signup Successfull, please login!")
       navigate("/login-page")
     } else {
       console.log("FAILED");

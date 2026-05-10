@@ -1,53 +1,64 @@
 import { FaDollarSign, FaUserTie, FaFire, FaSmile } from "react-icons/fa";
 
 export default function StatsSection() {
-  const stats = [
-    {
-      icon: <FaDollarSign />,
-      value: "$15.4M",
-      label: "Owned from Properties transactions",
-    },
-    {
-      icon: <FaUserTie />,
-      value: "25K+",
-      label: "Properties for Buy & sell Successfully",
-    },
-    {
-      icon: <FaFire />,
-      value: "500",
-      label: "Daily completed transactions",
-    },
-    {
-      icon: <FaSmile />,
-      value: "600+",
-      label: "Regular Clients",
-    },
-  ];
-
   return (
-    <section className="bg-[#f3f1ee] py-12">
-      <div className="max-w-6xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-        {stats.map((item, index) => (
-          <div key={index} className="flex flex-col items-center space-y-3">
-            
-            {/* Icon Circle */}
-            <div className="w-14 h-14 flex items-center justify-center rounded-full bg-white shadow-md text-orange-500 text-xl">
-              {item.icon}
-            </div>
-
-            {/* Number */}
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
-              {item.value}
-            </h2>
-
-            {/* Label */}
-            <p className="text-gray-500 text-sm max-w-[180px]">
-              {item.label}
-            </p>
-
+    <div className="w-full flex items-center justify-center bg-[#f3f0ee] p-9 ">
+      
+      <div className="max-w-6xl w-full grid grid-cols-2 md:grid-cols-4 gap-10 text-center">
+        
+        {/* ITEM 1 */}
+        <div>
+          <div className="w-[42px] h-[42px] mx-auto rounded-full bg-white shadow-sm flex items-center justify-center text-[#ff6b1a]">
+            ⓢ
           </div>
-        ))}
+
+          <h2 className="text-[34px] font-bold text-[#171717] mt-5">$15.4M</h2>
+
+          <p className="text-[#3e6882] text-[14px] mt-3">
+            Owned from<br />Properties transactions
+          </p>
+        </div>
+
+        {/* ITEM 2 */}
+        <div>
+          <div className="w-[42px] h-[42px] mx-auto rounded-full bg-white shadow-sm flex items-center justify-center text-[#ff6b1a]">
+            ⌘
+          </div>
+
+          <h2 className="text-[34px] font-bold text-[#171717] mt-5">25K+</h2>
+
+          <p className="text-[#3e6882] text-[14px] mt-3">
+            Properties for Buy & sell<br />Successfully
+          </p>
+        </div>
+
+        {/* ITEM 3 */}
+        <div>
+          <div className="w-[42px] h-[42px] mx-auto rounded-full bg-white shadow-sm flex items-center justify-center text-[#ff6b1a]">
+            ♨
+          </div>
+
+          <h2 className="text-[34px] font-bold text-[#171717] mt-5">500</h2>
+
+          <p className="text-[#3e6882] text-[14px] mt-3">
+            Daily completed<br />transactions
+          </p>
+        </div>
+
+        {/* ITEM 4 */}
+        <div>
+          <div className="w-[42px] h-[42px] mx-auto rounded-full bg-white shadow-sm flex items-center justify-center text-[#ff6b1a]">
+            ☺
+          </div>
+
+          <h2 className="text-[34px] font-bold text-[#171717] mt-5">600+</h2>
+
+          <p className="text-[#3e6882] text-[14px] mt-3">
+            Reagular Clients
+          </p>
+        </div>
+
       </div>
-    </section>
+    </div>
   );
 }

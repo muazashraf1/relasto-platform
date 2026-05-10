@@ -157,49 +157,12 @@ function Listings() {
         </div>
       </div>
 
-      <section className="mt-10 grid gap-6 lg:grid-cols-[2fr_1fr]">
-        <div className="rounded-4xl overflow-hidden bg-white shadow-xl border border-slate-200">
-          <div className="relative h-80">
-            <img
-              src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1400&q=80"
-              alt="Map preview"
-              className="h-full w-full object-cover"
-            />
-            <div className="absolute left-6 top-6 rounded-3xl bg-white/90 p-4 shadow-lg border border-slate-200 max-w-sm">
-              <p className="text-xs uppercase tracking-[0.3em] text-orange-500 font-semibold">Map preview</p>
-              <h2 className="mt-3 text-xl font-bold text-slate-900">Oakland, CA</h2>
-              <p className="text-sm text-slate-500 mt-1">Showing available listings in the selected neighbourhood.</p>
-              <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-2 text-sm text-slate-600">
-                <span className="h-2 w-2 rounded-full bg-orange-500" /> 22 locations
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <div className="rounded-4xl bg-white p-6 shadow-xl border border-slate-200">
-            <h3 className="text-lg font-semibold text-slate-900">Top Filters</h3>
-            <div className="mt-4 grid gap-4">
-              <div className="rounded-3xl bg-slate-50 p-4">
-                <p className="text-sm text-slate-500">Popular search</p>
-                <p className="mt-3 font-semibold text-slate-900">Verified homes, new listings, family houses</p>
-              </div>
-              <div className="rounded-3xl bg-slate-50 p-4">
-                <p className="text-sm text-slate-500">Agent support</p>
-                <p className="mt-3 font-semibold text-slate-900">Meet and compare trusted agents instantly.</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-4xl bg-white p-6 shadow-xl border border-slate-200">
-            <p className="text-sm uppercase tracking-[0.3em] text-orange-500 font-semibold">Listing summary</p>
-            <div className="mt-5 space-y-3 text-slate-600 text-sm">
-              <p>{totalCount} properties found</p>
-              <p>Showing page {currentPage} of {totalPages}</p>
-              <p>Updated daily with new homes and rentals.</p>
-            </div>
-          </div>
-        </div>
+      <section className="mt-10 flex justify-center items-center">
+        <img
+          src="/Relasto design (1)/google.png"
+          alt="Google Map"
+          className="w-[100%] h-[500px] object-cover"
+        />
       </section>
 
       <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">

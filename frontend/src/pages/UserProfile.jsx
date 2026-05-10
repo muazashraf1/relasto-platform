@@ -223,11 +223,6 @@ const UserProfile = () => {
   const { user, setUser, initialLoading, loadUser } = useContext(AuthContext);
   // const { visitRequests } = useContext(VisitContext)
 
-
-
-
-
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -330,7 +325,7 @@ const UserProfile = () => {
 
       setSuccess("Profile updated successfully ✅");
 
-      // 🔥 IMPORTANT: user state refresh
+      
       await loadUser();
 
       setIsModalOpen(false);
@@ -373,6 +368,8 @@ const UserProfile = () => {
   }, [])
 
   console.log(request);
+
+  // loadUser()
 
 
 

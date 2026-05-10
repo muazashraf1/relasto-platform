@@ -7,13 +7,18 @@ import AppointmentSection from "../components/AppointmentSection";
 import StatsSection from "../components/StatsSection";
 import PropertyList from "../components/PropertyList";
 import Footer from "../components/Footer";
+import PropertyLanding from "../components/PropertyLanding";
+import TestimonialSection from "../components/TestimonialSection";
+import NewsConsultSection from "../components/NewsConsultSection";
 
 function Home() {
   return (
     <>
       <HeroSection />
 
-      <section className="bg-slate-50 py-20">
+      <AppointmentSection />
+      <StatsSection />
+      {/* <section className="bg-slate-50 py-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mx-auto max-w-3xl">
             <span className="inline-flex items-center rounded-full bg-orange-100 px-4 py-2 text-sm font-semibold uppercase tracking-[0.3em] text-orange-600">
@@ -48,9 +53,9 @@ function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      <section className="bg-white py-20">
+      {/* <section className="bg-white py-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8 rounded-4xl bg-linear-to-r from-slate-900 to-slate-950 p-12 text-white shadow-2xl">
             <div className="max-w-2xl">
@@ -80,11 +85,12 @@ function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <PropertyList />
-      <AppointmentSection />
-      <StatsSection />
+      <PropertyLanding />
+      <TestimonialSection />
+      <NewsConsultSection />
 
       <Footer />
     </>

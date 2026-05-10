@@ -1,9 +1,12 @@
 ﻿import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axiosInstance";
-import { createReview, getAgentReviews, deleteReview, updateReview } from "../api/review";
+// import { createReview, getAgentReviews, deleteReview, updateReview } from "../api/review";
 import ReviewForm from "../components/ReviewForm";
 import { AuthContext } from "../context/AuthContext";
+import { ReviewsContext } from "../context/ReviewsContext";
+
+import { SingleAgentContext } from "../context/SingleAgentContext";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
 const API_HOST = API_BASE.replace(/\/api\/?$/, "");
@@ -17,39 +20,45 @@ function resolveImageUrl(url) {
 
 const AgentDetail = () => {
   const { id } = useParams();
+  // console.log(id);
   const navigate = useNavigate();
-  const [agent, setAgent] = useState(null);
-  const [properties, setProperties] = useState([]);
-  const [reviews, setReviews] = useState([]);
-  const [averageRating, setAverageRating] = useState(0);
-  const [reviewCount, setReviewCount] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [showReviewForm, setShowReviewForm] = useState(false);
-  const [reviewSubmitting, setReviewSubmitting] = useState(false);
-  const [reviewError, setReviewError] = useState("");
-  // const [user, setUser] = useState(null);
-  const initialReview = null
 
+
+  const {
+    reviews,
+    averageRating,
+    reviewCount,
+    loading,
+    reviewSubmitting,
+    reviewError,
+
+    fetchReviews,
+    submitReview,
+    removeReview,
+    startEditReview,
+
+    isEdit,
+    editReviewId,
+
+  } = useContext(ReviewsContext);
+
+
+  const {
+    agent,
+    agentLoading,
+    agentError,
+    fetchSingleAgent,
+  } = useContext(SingleAgentContext);
+
+
+  const [properties, setProperties] = useState([]);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const initialReview = null
   const [rating, setRating] = useState(initialReview?.rating || 5);
   const [comment, setComment] = useState(initialReview?.comment || "");
-  const [error, setError] = useState("");
-  const [isEdit, setIsEdit] = useState(false);
-  const [editReviewId, setEditReviewId] = useState(null);
-
   const { user } = useContext(AuthContext);
 
-  const fetchAgent = async () => {
-    try {
-      const res = await api.get(`/accounts/profile/${id}/`);
-      setAgent(res.data);
-      setAverageRating(res.data.average_rating ?? 0);
-      setReviewCount(res.data.review_count ?? 0);
-      setError("");
-    } catch (err) {
-      console.error(err);
-      setError("Failed to load agent profile");
-    }
-  };
+
 
   const fetchProperties = async () => {
     try {
@@ -60,75 +69,55 @@ const AgentDetail = () => {
     }
   };
 
-  const fetchReviews = async () => {
-    try {
-      const res = await getAgentReviews(id);
-      setReviews(res.reviews || []);
-      setReviewCount(res.review_count || 0);
-      setAverageRating(res.average_rating ? parseFloat(res.average_rating) : 0);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    fetchAgent();
+    fetchSingleAgent(id);
     fetchProperties();
-    fetchReviews();
+    fetchReviews(id);
   }, [id]);
 
-  const handleReviewSubmit = async (reviewData) => {
-    setReviewSubmitting(true);
-    setReviewError("");
 
-    try {
-      if (isEdit && editReviewId) {
-        await updateReview(editReviewId, reviewData.rating, reviewData.comment);
-        setShowReviewForm(false);
-        setIsEdit(false);
-      } else {
-        await createReview(parseInt(id), reviewData.rating, reviewData.comment);
-        setShowReviewForm(false);
-      }
-      await fetchReviews(); // Refresh reviews
-    } catch (err) {
-      setReviewError(err.error || err.message || err.detail || "Failed to submit review");
-    } finally {
-      setReviewSubmitting(false);
+  const handleReviewSubmit = async () => {
+
+    const success = await submitReview(
+      id,
+      rating,
+      comment
+    );
+
+    if (success) {
+
+      setShowReviewForm(false);
+
+      setComment("");
+      setRating(5);
+
     }
   };
+
 
   const handleDeleteReview = async (reviewId) => {
-    if (!window.confirm("Are you sure you want to delete this review?")) {
-      return;
-    }
+    await removeReview(
+      reviewId,
+      id
+    );
+  };
 
-    try {
-      await deleteReview(reviewId);
-      setReviewError("");
-      await fetchReviews(); // Refresh reviews
-    } catch (err) {
-      setReviewError(err.error || err.message || "Failed to delete review");
-    }
+  const handleEditReview = (review) => {
+    startEditReview(review);
+    setComment(review.comment);
+    setRating(review.rating);
+    setShowReviewForm(true);
   };
 
 
-  const handleEditReview = async (reviewId) => {
-    const userReview = reviews.find((r) => r.user === user?.username)
 
-    setEditReviewId(reviewId)
-    setIsEdit(true)
-    setComment(userReview.comment)
-    setRating(userReview.rating)
-    setShowReviewForm(!showReviewForm)
-  }
-
-  if (loading || !agent)
+  // if (loading || !agent)
+  if (agentLoading || !agent)
     return (
       <div className="flex h-screen items-center justify-center">
-        {error ? (
+        {/* {error ? ( */}
+        {agentError ? (
           <div className="rounded-lg bg-red-50 p-6 text-center border border-red-200">
             <h3 className="text-lg font-semibold text-red-900">{error}</h3>
             <button
@@ -149,6 +138,10 @@ const AgentDetail = () => {
 
   const agentImage = resolveImageUrl(agent.profile_image);
   const userHasReviewed = reviews.some((r) => r.user === user?.username);
+  const isOwnProfile = user?.id === agent?.id
+
+  console.log(agent);
+
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -284,14 +277,48 @@ const AgentDetail = () => {
             <div>
               <div className="mb-10 flex items-center justify-between">
                 <h2 className="text-3xl font-bold text-slate-900">Client Reviews</h2>
-                {user && !userHasReviewed && (
-                  <button
-                    onClick={() => setShowReviewForm(!showReviewForm)}
-                    className="rounded-full border border-slate-200 bg-white px-6 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
-                  >
-                    Write Review
-                  </button>
-                )}
+                {/* <div>
+                  {user ? (
+                    !userHasReviewed &&
+                    !isOwnProfile && (
+                      <button
+                        onClick={() => setShowReviewForm(!showReviewForm)}
+                        className="rounded-full border border-slate-200 bg-white px-6 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+                      >
+                        Write Review
+                      </button>
+                    )
+                  ) : (
+                    <p className="text-sm font-medium text-red-500">
+                      Please login first to write a review.
+                    </p>
+                  )}
+                </div> */}
+
+
+                <div>
+                  {user ? (
+                    isOwnProfile ? (
+                      <p className="text-sm font-medium text-red-500">
+                        You cannot review yourself.
+                      </p>
+                    ) : (
+                      !userHasReviewed && (
+                        <button
+                          onClick={() => setShowReviewForm(!showReviewForm)}
+                          className="rounded-full border border-slate-200 bg-white px-6 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+                        >
+                          Write Review
+                        </button>
+                      )
+                    )
+                  ) : (
+                    <p className="text-sm font-medium text-red-500">
+                      Please login first to write a review.
+                    </p>
+                  )}
+                </div>
+
               </div>
 
               {/* REVIEW FORM */}
@@ -360,7 +387,8 @@ const AgentDetail = () => {
                               )}
                               {user && user.username === review.user && (
                                 <button
-                                  onClick={() => handleEditReview(review.id)}
+                                  // onClick={() => handleEditReview(review.id)}
+                                  onClick={() => handleEditReview(review)}
                                   className="text-sm text-red-600 hover:text-red-800 font-semibold"
                                 >
                                   Edit
@@ -380,19 +408,30 @@ const AgentDetail = () => {
 
           {/* SIDEBAR */}
           <div className="space-y-6">
-            <div className="rounded-4xl bg-white p-6 shadow-lg border border-slate-200 sticky top-20">
-              <h3 className="mb-6 text-lg font-bold text-slate-900">Contact Agent</h3>
+            <div className="rounded-4xl bg-white p-6 shadow-lg border border-slate-200  top-20">
+              <h3 className="mb-6 text-lg font-bold text-slate-900">Agent Additional Information</h3>
+
+              <div className="mb-3">
+                {agent.username && (
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-slate-500 font-semibold">Name</p>
+                    <p className="mt-2 text-sm text-slate-800 font-bold">{agent.username}</p>
+                  </div>
+                )}
+              </div>
 
               <div className="space-y-4">
                 <div>
                   <p className="text-xs uppercase tracking-widest text-slate-500 font-semibold">Email</p>
-                  <a
-                    href={`mailto:${agent.email}`}
-                    className="mt-1 text-sm font-semibold text-slate-900 hover:text-blue-600 break-all"
+                  <h3
+
+                    className="mt-1 text-sm font-semibold text-slate-900"
                   >
                     {agent.email}
-                  </a>
+                  </h3>
                 </div>
+
+
 
                 <div>
                   <p className="text-xs uppercase tracking-widest text-slate-500 font-semibold">Phone</p>
@@ -404,40 +443,18 @@ const AgentDetail = () => {
                       {agent.phone}
                     </a>
                   ) : (
-                    <p className="mt-1 text-sm text-slate-500">Not provided</p>
+                    <p className="mt-1 text-sm font-semibold text-slate-900">Not provided</p>
                   )}
                 </div>
 
+
                 <div>
-                  <p className="text-xs uppercase tracking-widest text-slate-500 font-semibold">Address</p>
+                  <p className="text-xs uppercase tracking-widest text-slate-500 font-semibold">Location</p>
                   <p className="mt-1 text-sm font-semibold text-slate-900">
-                    {agent.address || "Not provided"}
+                    {agent.location || "Not provided"}
                   </p>
                 </div>
 
-                {agent.bio && (
-                  <div>
-                    <p className="text-xs uppercase tracking-widest text-slate-500 font-semibold">About</p>
-                    <p className="mt-2 text-sm text-slate-600">{agent.bio}</p>
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-8 space-y-3 border-t border-slate-200 pt-6">
-                <a
-                  href={`mailto:${agent.email}`}
-                  className="block w-full rounded-full bg-slate-900 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-slate-800"
-                >
-                  Send Email
-                </a>
-                {agent.phone && (
-                  <a
-                    href={`tel:${agent.phone}`}
-                    className="block w-full rounded-full border border-slate-200 bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
-                  >
-                    Call Agent
-                  </a>
-                )}
               </div>
             </div>
 

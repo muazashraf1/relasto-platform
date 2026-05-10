@@ -7,7 +7,7 @@ const ProtectedRoute = ({ children }) => {
 
 
   if (initialLoading) {
-    return <p>Loading...</p>;
+    return <p>Loading...</p>;a
   }
 
   console.log(user);

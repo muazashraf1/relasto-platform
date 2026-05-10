@@ -1,39 +1,3 @@
-// import React from 'react'
-// import { Route, Routes } from 'react-router-dom'
-// // import Login from './pages/Login'
-// // import Signup from './pages/Signup'
-// import Home from './pages/Home'
-// import Navbar from './components/Navbar'
-// import Login from './pages/Login'
-// import Signup from './pages/Signup'
-// import Listings from './pages/Listings'
-// import PropertyDetail from './pages/PropertyDetail'
-
-// function App() {
-//   return (
-//     <>
-//       <Navbar />
-//       <Routes>
-//         <Route path='/' element={<Home />} />
-//         <Route path='/login-page' element={<Login />} />
-//         <Route path='/signup-page' element={<Signup />} />
-//         <Route path='/property-listing' element={<Listings/>} />
-//         <Route path='/property/:slug' element={<PropertyDetail/>} />
-//       </Routes>
-//     </>
-//   )
-// }
-
-// export default App
-
-
-
-
-
-
-
-
-
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
@@ -93,27 +57,27 @@ function App() {
         <Route
           path="/profile"
           element={
-            // <ProtectedRoute>
+            <ProtectedRoute>
               <UserProfile />
-            // </ProtectedRoute>
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/add-property"
           element={
-            // <ProtectedRoute>
+            <ProtectedRoute>
               <AgentPropertyCreate />
-            // </ProtectedRoute>
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/edit-property/:slug"
           element={
-            // <ProtectedRoute>
+            <ProtectedRoute>
               <UpdateProperty />
-            // </ProtectedRoute>
+            </ProtectedRoute>
           }
         />
 
@@ -121,9 +85,9 @@ function App() {
         <Route
           path="/agent"
           element={
-            // <ProtectedRoute>
+            <ProtectedRoute>
               <AgentDashboard />
-            // </ProtectedRoute>
+            </ProtectedRoute>
           }
         >
           <Route path="dashboard" element={<h2>Welcome Agent</h2>} />
@@ -133,7 +97,7 @@ function App() {
           <Route path="profile" element={<AgentProfile />} />
         </Route>
 
-        <Route path="*" element={<NotFound/>} />
+        <Route path="*" element={<NotFound />} />
 
       </Routes>
       <ToastContainer />

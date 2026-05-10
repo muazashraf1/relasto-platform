@@ -331,8 +331,6 @@ const PropertyList = () => {
                             <img
                                 src={
                                     property.primary_image
-                                        ? BASE_URL + property.primary_image
-                                        : "https://via.placeholder.com/400"
                                 }
                                 alt="property"
                                 className="w-full h-full object-cover"
