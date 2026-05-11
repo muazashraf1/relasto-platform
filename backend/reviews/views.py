@@ -9,24 +9,6 @@ from accounts.models import User
 from django.db.models import Avg
 
 
-# class CreateReviewView(APIView):
-#     permission_classes = [IsAuthenticated]
-#     def post(self, request):
-#         data = Review.objects.all()  👉 ❌ ye create nahi hai, ye list hai
-#         serializer = ReviewCreateSerializer(data, many=True)
-#         if not  serializer.agent.is_agent: 👉 ❌ serializer me aisa access nahi hota
-#             KeyError
-#         data.save() 👉 ❌ queryset pe save nahi hota
-#         return Response(serializer.data)
-
-# class AgentReviewListView(APIView):
-#     def get(self, request, id):
-#         agent_id = Review.objects.filter(id=id)
-#         serializers = ReviewListSerializer(agent_id)
-#         return Response(serializers.data)
-
-# class UpdateReviewView(APIView):
-
 
 class CreateReviewView(APIView):
     permission_classes = [IsAuthenticated]

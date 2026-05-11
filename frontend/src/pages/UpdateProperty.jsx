@@ -24,7 +24,8 @@ const UpdateProperty = () => {
       loading: propertyLoading,
     } = useContext(PropertyContext);
 
-    const property_id = propertyDetail
+    // const property_id = propertyDetaila
+    const property_id = propertyDetail?.id;
     
 
     const BASE_URL = "http://localhost:8000";    
@@ -48,8 +49,45 @@ const UpdateProperty = () => {
     features : []
   });
 
+
+  // Validation State
+const [validationErrors, setValidationErrors] = useState({});
+
+// Validation Function
+const handleValidation = () => {
+  let errs = {};
+
+  if (!formData.title.trim()) {
+    errs.title = "Property title is required!";
+  }
+
+  if (!formData.description.trim()) {
+    errs.description = "Description is required!";
+  }
+
+  if (!formData.price) {
+    errs.price = "Price is required!";
+  }
+
+  if (!formData.city.trim()) {
+    errs.city = "City is required!";
+  }
+
+  if (!formData.address.trim()) {
+    errs.address = "Address is required!";
+  }
+
+  setValidationErrors(errs);
+
+  return Object.keys(errs).length === 0;
+};
+
+
   // Multiple Images State
-  const [images, setImages] = useState([]);
+  // const [images, setImages] = useState([]);
+
+  const [existingImages, setExistingImages] = useState([]);
+const [newImages, setNewImages] = useState([]);
 
   // Features / Amenities State
   const [features, setFeatures] = useState([
@@ -80,14 +118,15 @@ const UpdateProperty = () => {
             // images : propertyDetail.images,
             // features : propertyDetail.features,
         })
-        setImages(propertyDetail.images)
+        // setImages(propertyDetail.images)
+        setExistingImages(propertyDetail.images)
         setFeatures(propertyDetail.features)
         }
 
     }, [propertyDetail])
 
-    console.log("propertyDetail:", images);
-    console.log("formData:", formData);
+    // console.log("propertyDetail:", images);
+    // console.log("formData:", formData);
     
 
   // Handle Basic Input Changes
@@ -103,7 +142,8 @@ const UpdateProperty = () => {
   // Handle Image Selection
   const handleImageChange = (e) => {
     // Convert FileList into array
-    setImages([...e.target.files]);
+    // setImages([...e.target.files]);
+    setNewImages([...e.target.files]);
   };
 
   // Handle Feature Input Changes
@@ -135,9 +175,15 @@ const UpdateProperty = () => {
     setFeatures(updatedFeatures);
   };
 
+  
   // Main Submit Function
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const isValid = handleValidation();
+
+    if (!isValid) return;
+
 
     setError("");
     setSuccess("");
@@ -152,19 +198,28 @@ const UpdateProperty = () => {
         city : formData.city,
         address : formData.address,
         images : formData.images,
-        features : formData.features,
+        // features : formData.features,
+        features: features,
     }
 
     try {
-        // const puttig = await api.put(`properties/update/${slug}/`,payload)
-        const puttig = await updateProperty(slug, payload)
-        setSuccess("Profile updated successfully ✅");
-        toast.success("Najoomis school")
-        navigate('/profile')
 
-        const updatingImage = await updatePropertyImages(property_id.id,images)
+  await updateProperty(slug, payload);
 
-        const updatingFeatures = await updatePropertyFeatures(property_id.id, features)
+  // update images
+  if (newImages.length > 0) {
+    // await updatePropertyImages(property_id, images);
+    await updatePropertyImages(property_id, newImages);
+  }
+
+  // update features
+  if (features.length > 0) {
+    await updatePropertyFeatures(property_id, features);
+  }
+
+  toast.success("Property Edited Successfully!");
+
+  navigate("/profile");
 
     } catch (err) {
       console.log(err);
@@ -218,6 +273,12 @@ const UpdateProperty = () => {
               placeholder="Beautiful House in DHA"
               className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:ring-2 focus:ring-slate-200"
             />
+
+            {validationErrors.title && (
+  <span className="text-red-600 text-sm">
+    {validationErrors.title}
+  </span>
+)}
           </div>
 
           {/* Description */}
@@ -234,6 +295,12 @@ const UpdateProperty = () => {
               placeholder="Describe property..."
               className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:ring-2 focus:ring-slate-200"
             />
+
+            {validationErrors.description && (
+  <span className="text-red-600 text-sm">
+    {validationErrors.description}
+  </span>
+)}
           </div>
 
           {/* Price & Type */}
@@ -251,6 +318,12 @@ const UpdateProperty = () => {
                 placeholder="5000000"
                 className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:ring-2 focus:ring-slate-200"
               />
+
+              {validationErrors.price && (
+  <span className="text-red-600 text-sm">
+    {validationErrors.price}
+  </span>
+)}
             </div>
 
             <div>
@@ -303,6 +376,12 @@ const UpdateProperty = () => {
                 placeholder="Lahore"
                 className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:ring-2 focus:ring-slate-200"
               />
+
+              {validationErrors.city && (
+  <span className="text-red-600 text-sm">
+    {validationErrors.city}
+  </span>
+)}
             </div>
           </div>
 
@@ -320,6 +399,12 @@ const UpdateProperty = () => {
               placeholder="Full address..."
               className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:ring-2 focus:ring-slate-200"
             />
+
+            {validationErrors.address && (
+  <span className="text-red-600 text-sm">
+    {validationErrors.address}
+  </span>
+)}
           </div>
 
           {/* Multiple Images Upload */}
@@ -336,11 +421,11 @@ const UpdateProperty = () => {
             />
 
             {/* Selected Images Preview Names */}
-            {images.length > 0 && (
-              <div className="mt-3 space-y-1">
-                <p>{images.length} Files Chooses</p>
-              </div>
-            )}
+            {newImages.length > 0 && (
+  <div className="mt-3 space-y-1">
+    <p>{newImages.length} Files Chosen</p>
+  </div>
+)}
           </div>
 
           {/* Features Section */}

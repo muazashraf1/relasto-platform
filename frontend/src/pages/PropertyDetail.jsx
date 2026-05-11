@@ -10,6 +10,39 @@ const PropertyDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
 
+  const { user } = useContext(AuthContext);
+
+
+  const [formErrors, setFormErrors] = useState({});
+
+
+  const validateForm = () => {
+    let errors = {};
+
+    // PHONE
+    if (!formData.phone.trim()) {
+      errors.phone = "Phone number is required";
+    } else if (formData.phone.length < 11) {
+      errors.phone = "Phone number must be at least 11 digits";
+    }
+
+    // EMAIL
+    if (!formData.email.trim()) {
+      errors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = "Invalid email format";
+    }
+
+    // DATE
+    if (!formData.preferred_date) {
+      errors.preferred_date = "Preferred date is required";
+    }
+
+    setFormErrors(errors);
+
+    return Object.keys(errors).length === 0;
+  };
+
 
 
   // 🔹 PROPERTY CONTEXT
@@ -30,7 +63,7 @@ const PropertyDetail = () => {
   } = useContext(VisitContext);
 
   const [formData, setFormData] = useState({
-    name: "",
+    // user: "",
     phone: "",
     email: "",
     preferred_date: "",
@@ -64,13 +97,18 @@ const PropertyDetail = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!validateForm()) return;
+
     clearMessages(); // 🔥 important
 
     const res = await submitVisitRequest(slug, formData);
 
+    console.log("Response:", res);
+
+
     if (res) {
       setFormData({
-        name: "",
+        // name: "",
         phone: "",
         email: "",
         preferred_date: "",
@@ -162,68 +200,89 @@ const PropertyDetail = () => {
       </div>
 
       {/* 🔥 RIGHT SIDE FORM */}
-      <div className="bg-white p-6 rounded-xl shadow h-fit">
+      {/* 🔥 RIGHT SIDE FORM */}
+      {user?.id !== propertyDetail.agent?.id && (
+        <div className="bg-white p-6 rounded-xl shadow h-fit">
 
-        <h3 className="font-semibold mb-4">Request for Visit</h3>
+          <h3 className="font-semibold mb-4">Request for Visit</h3>
 
-        {success && (
-          <p className="text-green-600 mb-3 text-sm">{success}</p>
-        )}
+          {success && (
+            <p className="text-green-600 mb-3 text-sm">{success}</p>
+          )}
 
-        {error && (
-          <p className="text-red-500 mb-3 text-sm">{error}</p>
-        )}
+          {error && (
+            <p className="text-red-500 mb-3 text-sm">{error}</p>
+          )}
 
-        <form onSubmit={handleSubmit} className="space-y-3">
+          <form onSubmit={handleSubmit} className="space-y-3">
+            {/* 
+            <input
+              type="text"
+              name="user"
+              placeholder="Name"
+              value={formData.user}
+              onChange={handleChange}
+              className="w-full border p-2 rounded"
+              required
+            /> */}
 
-          <input
-            type="text"
-            name="name"
-            placeholder="Name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            required
-          />
+            <input
+              type="text"
+              name="phone"
+              placeholder="Phone Number"
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full border p-2 rounded"
+              required
+            />
 
-          <input
-            type="text"
-            name="phone"
-            placeholder="Phone Number"
-            value={formData.phone}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            required
-          />
+            {formErrors.phone && (
+              <p className="text-red-500 text-sm mt-1">
+                {formErrors.phone}
+              </p>
+            )}
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email Address"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            required
-          />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full border p-2 rounded"
+              required
+            />
 
-          <input
-            type="datetime-local"
-            name="preferred_date"
-            value={formData.preferred_date}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            required
-          />
+            {formErrors.email && (
+              <p className="text-red-500 text-sm mt-1">
+                {formErrors.email}
+              </p>
+            )}
 
-          <button
-            type="submit"
-            disabled={visitLoading}
-            className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
-          >
-            {visitLoading ? "Sending..." : "Send Request"}
-          </button>
-        </form>
-      </div>
+            <input
+              type="datetime-local"
+              name="preferred_date"
+              value={formData.preferred_date}
+              onChange={handleChange}
+              className="w-full border p-2 rounded"
+              required
+            />
+
+            {formErrors.preferred_date && (
+              <p className="text-red-500 text-sm mt-1">
+                {formErrors.preferred_date}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={visitLoading}
+              className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
+            >
+              {visitLoading ? "Sending..." : "Send Request"}
+            </button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };

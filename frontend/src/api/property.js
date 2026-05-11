@@ -7,7 +7,7 @@ export const getProperties = async () => {
   return res.data;
 };
 
-// secondly getting properties with filter adn pagination\
+// secondly getting properties with filter adn pagination
 
 export const getFilteredProperties = async (params) => {
   // params = { city, type, min_price, max_price, page, search } all these are comming from views.py of properties line number 112-117
@@ -33,13 +33,6 @@ export const getAgentProperties = async (agentId, params = {}) => {
   return res.data;
 };
 
-//  CREATE PROPERTY (AGENT ONLY)
-// export const createProperty = async (data) => {
-//   const res = await api.post("/properties/create/", data);
-//   return res.data;
-// };
-
-
 export const updateProperty = async (slug, data) => {
   const res = await api.put(`/properties/update/${slug}/`, data);
   return res.data;
@@ -48,7 +41,6 @@ export const updateProperty = async (slug, data) => {
 export const updatePropertyImages = async (propertyId, images) => {
   const formData = new FormData();
 
-  // Append all images
   images.forEach((image) => {
     formData.append("images", image);
   });

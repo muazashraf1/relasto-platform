@@ -1,11 +1,9 @@
 ﻿import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axiosInstance";
-// import { createReview, getAgentReviews, deleteReview, updateReview } from "../api/review";
 import ReviewForm from "../components/ReviewForm";
 import { AuthContext } from "../context/AuthContext";
 import { ReviewsContext } from "../context/ReviewsContext";
-
 import { SingleAgentContext } from "../context/SingleAgentContext";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
@@ -42,6 +40,8 @@ const AgentDetail = () => {
 
   } = useContext(ReviewsContext);
 
+  console.log(reviews);
+  
 
   const {
     agent,
@@ -141,6 +141,8 @@ const AgentDetail = () => {
   const isOwnProfile = user?.id === agent?.id
 
   console.log(agent);
+  console.log(rating);
+
 
 
   return (
@@ -156,7 +158,7 @@ const AgentDetail = () => {
 
         <div className="relative mx-auto max-w-7xl px-4 h-full flex items-end pb-8">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:gap-10">
-            <div className="relative h-40 w-40 overflow-hidden rounded-4xl border-4 border-white shadow-2xl">
+            <div className="relative h-40 w-40 overflow-hidden rounded-full border-4 border-white shadow-2xl">
               {agentImage ? (
                 <img
                   src={agentImage}
@@ -164,8 +166,8 @@ const AgentDetail = () => {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="flex h-full items-center justify-center bg-slate-300 text-slate-600">
-                  No image
+                <div className="flex h-full items-center justify-center  bg-slate-300 text-slate-600">
+                  <img src="/Relasto design (1)/sad.jpg" alt="" />
                 </div>
               )}
             </div>
@@ -190,7 +192,7 @@ const AgentDetail = () => {
             </div>
           </div>
         </div>
-      </div> {/* ✅ HERO SECTION CLOSED */}
+      </div>
 
       <div className="mx-auto max-w-7xl px-4 py-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
@@ -277,24 +279,6 @@ const AgentDetail = () => {
             <div>
               <div className="mb-10 flex items-center justify-between">
                 <h2 className="text-3xl font-bold text-slate-900">Client Reviews</h2>
-                {/* <div>
-                  {user ? (
-                    !userHasReviewed &&
-                    !isOwnProfile && (
-                      <button
-                        onClick={() => setShowReviewForm(!showReviewForm)}
-                        className="rounded-full border border-slate-200 bg-white px-6 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
-                      >
-                        Write Review
-                      </button>
-                    )
-                  ) : (
-                    <p className="text-sm font-medium text-red-500">
-                      Please login first to write a review.
-                    </p>
-                  )}
-                </div> */}
-
 
                 <div>
                   {user ? (

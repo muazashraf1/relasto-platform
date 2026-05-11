@@ -7,14 +7,14 @@ const ProtectedRoute = ({ children }) => {
 
 
   if (initialLoading) {
-    return <p>Loading...</p>;a
+    return <p>Loading...</p>;
   }
 
   console.log(user);
   
 
   if (!user) {
-    return <Navigate to="/login-page" />;
+    return <Navigate to="/login-page"/>;
   }
 
   return children;

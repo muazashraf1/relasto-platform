@@ -14,8 +14,6 @@ function Navbar() {
 
   const handleLogout = () => {
     clearTokens()
-    // navigate('/login-page')
-    // navigate('/')
   }
 
 
@@ -25,7 +23,7 @@ function Navbar() {
 
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
-        <div className="text-2xl flex justify-center gap-2 font-bold text-orange-500">
+        <div onClick={() => navigate('/')} className="text-2xl flex justify-center gap-2 font-bold text-orange-500">
           <img className="h-10" src="/Relasto design (1)/nav-icon.png" alt="" />
           Relasto
         </div>
@@ -60,10 +58,6 @@ function Navbar() {
 
 
           <div className="flex items-center gap-2">
-
-            <button className="p-2 rounded-full hover:bg-gray-100 transition">
-              <Search size={18} />
-            </button>
 
             {IsLoggedIn && (
               <button onClick={() => navigate('/profile')} className="p-2 rounded-full bg-orange-100 text-orange-500 hover:bg-orange-200 transition cursor-pointer">

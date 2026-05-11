@@ -15,6 +15,28 @@ const Login = () => {
 
   console.log(user);
 
+  // for validation
+  const [errors, setErrors] = useState({});
+
+  const handleValidation = () => {
+    let errs = {};
+
+    if (!formData.email) {
+      errs.email = "Required Email!";
+    }
+
+    if (!formData.password) {
+      errs.password = "Required Password!";
+    }
+
+    setErrors(errs);
+
+    return Object.keys(errs).length === 0;
+  };
+
+
+
+
   useEffect(() => {
     if (user) {
       navigate('/profile')
@@ -32,21 +54,41 @@ const Login = () => {
   }
 
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault()
+
+  //   const success = await login(formData)
+
+  //   console.log(success);
+
+
+  //   if (success) {
+  //     toast.success("Login Successfully")
+  //     navigate("/");
+  //   } else {
+  //     console.log(error)
+  //   }
+  // }
+
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const success = await login(formData)
+    const isValid = handleValidation();
 
-    console.log(success);
+    if (isValid) {
+      const success = await login(formData);
 
+      console.log(success);
 
-    if (success) {
-      toast.success("Login Successfully")
-      navigate("/");
-    } else {
-      console.log(error)
+      if (success) {
+        toast.success("Login Successfully");
+        navigate("/");
+      } else {
+        console.log(error);
+      }
     }
-  }
+  };
+
   console.log("error:", error);
 
   useEffect(() => {
@@ -76,6 +118,14 @@ const Login = () => {
               placeholder="Email address"
               className="w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400"
             />
+
+            {errors.email && (
+              <span className="text-red-700 text-lg">
+                {errors.email}
+              </span>
+            )}
+
+
           </div>
 
           {/* Password */}
@@ -88,6 +138,12 @@ const Login = () => {
               onChange={handleChange}
               className="w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400"
             />
+
+            {errors.password && (
+              <span className="text-red-700 text-lg">
+                {errors.password}
+              </span>
+            )}
           </div>
 
           {/* Button */}

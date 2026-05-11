@@ -2,21 +2,6 @@ from rest_framework import serializers
 from reviews.models import Review
 from accounts.models import User
 
-
-# class ReviewCreateSerializer(serializers.ModelSerializer):
-#     agent = serializers.CharField(write_only=True) ❌ galat — agent id hona chahiye, string nahi
-#     class Meta:
-#         model = Review
-#         fields = ["rating", "comment", "agent"]
-
-
-# class ReviewListSerializer(serializers.ModelSerializer):
-#     user = serializers.CharField(read_only=True) ❌ is se username nahi aayega properly
-#     class Meta:
-#         model = Review
-#         fields = ["user", "rating", "comment", "created_at"]
-
-
 class ReviewCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review

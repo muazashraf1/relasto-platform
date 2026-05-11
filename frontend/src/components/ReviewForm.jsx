@@ -31,7 +31,7 @@ export default function ReviewForm({ agentId, onSubmit, isLoading, onCancel, rat
     }
 
     try {
-      await onSubmit({ rating, comment,  });
+      await onSubmit({ rating, comment });
       setRating(5);
       setComment("");
     } catch (err) {

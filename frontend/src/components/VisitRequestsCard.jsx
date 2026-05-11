@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/axiosInstance";
 
-const VisitRequestsCard = () => {
+const VisitRequestsCard = ({properties}) => {
     const [requests, setRequests] = useState([]);
 
     const fetchRequests = async () => {
@@ -24,7 +24,7 @@ const VisitRequestsCard = () => {
 
     useEffect(() => {
         fetchRequests();
-    }, []);
+    }, [properties]);
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-10">
@@ -64,12 +64,12 @@ const VisitRequestsCard = () => {
                             {/* INFO */}
                             <div className="space-y-3">
 
-                                <div className="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                                {/* <div className="bg-slate-50 border border-slate-200 rounded-xl p-3">
                                     <p className="text-xs text-slate-500">Name</p>
                                     <p className="text-sm font-medium text-slate-900">
-                                        {r.name}
+                                        {r.user}
                                     </p>
-                                </div>
+                                </div> */}
 
                                 <div className="bg-slate-50 border border-slate-200 rounded-xl p-3">
                                     <p className="text-xs text-slate-500">Email</p>

@@ -270,13 +270,6 @@ class DeletePropertyView(APIView):
 
 # --- 5.5 module
 
-# class PropertySearchView(APIView):
-#     def get(self, request):
-#         queryset = Property.objects.all()
-#         serializer = PropertyListSerializer
-#         filter_backends = [DjangoFilterBackend]
-#         filterset_class = PropertyFilter
-
 
 class PropertySearchView(APIView):
     def get(self, request):
@@ -288,7 +281,7 @@ class PropertySearchView(APIView):
         min_price = request.GET.get("min_price")
         max_price = request.GET.get("max_price")
         status = request.GET.get("status")
-        search = request.GET.get("search")  # NEW
+        search = request.GET.get("search")  
 
         if status:
             queryset = queryset.filter(status=status)

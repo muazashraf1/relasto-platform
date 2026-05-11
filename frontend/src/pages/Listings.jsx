@@ -77,6 +77,9 @@ function Listings() {
 
   const totalPages = Math.max(1, Math.ceil(totalCount / limit));
 
+  console.log(properties);
+
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
       <div className="rounded-4xl bg-white p-6 shadow-xl border border-slate-200">
@@ -189,16 +192,12 @@ function Listings() {
 
                 <div className="grid gap-3 sm:grid-cols-3 text-sm text-slate-500">
                   <div className="rounded-3xl bg-slate-50 px-4 py-3">
-                    <p className="font-semibold text-slate-900">Beds</p>
-                    <p>{property.features?.find((f) => f.key.toLowerCase().includes("bed"))?.value || "3"}</p>
-                  </div>
-                  <div className="rounded-3xl bg-slate-50 px-4 py-3">
-                    <p className="font-semibold text-slate-900">Baths</p>
-                    <p>{property.features?.find((f) => f.key.toLowerCase().includes("bath"))?.value || "2"}</p>
-                  </div>
-                  <div className="rounded-3xl bg-slate-50 px-4 py-3">
-                    <p className="font-semibold text-slate-900">Agent</p>
-                    <p>{property.agent?.username || "Relasto"}</p>
+                    <p>{property.features?.map((feature) => (
+                      <div key={feature.key}>
+                        <h4>{feature.key}</h4>
+                        <h4>{feature.value}</h4>
+                      </div>
+                    ))}</p>
                   </div>
                 </div>
 

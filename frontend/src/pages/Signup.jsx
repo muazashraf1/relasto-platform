@@ -15,6 +15,31 @@ const Signup = () => {
   });
 
 
+  const [errors, setErrors] = useState({})
+
+  const handleValidation = () => {
+    let errs = {}
+
+    if (!form.email) {
+      errs.email = "Required Email!"
+    }
+
+    if (!form.username) {
+      errs.username = "Required username!"
+    }
+
+    if (!form.password) {
+      errs.password = "Required password1"
+    }
+
+    if (!form.password2) {
+      errs.password2 = "Required password2"
+    }
+
+    setErrors(errs)
+    return Object.keys(errs).length === 0
+  }
+
   const navigate = useNavigate()
 
   // handle change
@@ -32,17 +57,23 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const isValid = handleValidation()
+
+
     console.log("FORM DATA:", form); // 🔥 ADD THIS
 
-    const res = await register(form);
+    if (isValid) {
+      const res = await register(form);
 
-    if (res) {
-      console.log("OK");
-      toast.success("Signup Successfull, please login!")
-      navigate("/login-page")
-    } else {
-      console.log("FAILED");
+      if (res) {
+        console.log("OK");
+        toast.success("Signup Successfull, please login!")
+        navigate("/login-page")
+      } else {
+        console.log("FAILED");
+      }
     }
+
   };
 
 
@@ -75,6 +106,7 @@ const Signup = () => {
               placeholder="Username"
               className="w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400"
             />
+            {errors.username && <span className="text-red-700 text-lg">{errors.username}</span>}
           </div>
 
           {/* Email */}
@@ -87,6 +119,8 @@ const Signup = () => {
               placeholder="Email address"
               className="w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400"
             />
+            {errors.email && <span className="text-red-700 text-lg">{errors.email}</span>}
+
           </div>
 
           {/* Password */}
@@ -99,6 +133,7 @@ const Signup = () => {
               placeholder="Password"
               className="w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400"
             />
+            {errors.password && <span className="text-red-700 text-lg">{errors.password}</span>}
           </div>
 
           {/* Confirm Password */}
@@ -111,6 +146,8 @@ const Signup = () => {
               placeholder="Confirm Password"
               className="w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400"
             />
+            {errors.password2 && <span className="text-red-700 text-lg">{errors.password2}</span>}
+
           </div>
 
           {/* is_agent Select */}
